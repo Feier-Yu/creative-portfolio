@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud Banner Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Special+Elite&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #1a2a3a;
+      --ink: #d8e4ed;
+      --muted: #8da7bb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #31485d 0%, #1a2a3a 52%, #142230 100%);
+      color: var(--ink);
+      font-family: "Cormorant Garamond", serif;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 2rem 0 4rem;
+    }
+
+    .page-wrap {
+      width: min(1080px, 92vw);
+      margin: 0 auto;
+    }
+
+    .banner {
+      position: relative;
+      min-height: clamp(290px, 42vw, 470px);
+      border: 1px solid rgba(210, 224, 235, 0.18);
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 78% 32%, rgba(223, 202, 161, 0.18) 0%, transparent 40%),
+        linear-gradient(135deg, rgba(21, 35, 49, 0.84), rgba(38, 63, 86, 0.6));
+      box-shadow: 0 18px 42px rgba(6, 12, 18, 0.42);
+      margin-bottom: 2rem;
+      isolation: isolate;
+    }
+
+    .cloud-stack {
+      position: absolute;
+      left: -10%;
+      top: 3%;
+      width: 62%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .banner-cloud {
+      position: absolute;
+      width: 88%;
+      max-width: 780px;
+      opacity: 0.82;
+      filter: saturate(0.72) brightness(0.72);
+      animation: drift 16s ease-in-out infinite alternate;
+      transform-origin: center;
+      object-fit: contain;
+    }
+
+    .banner-cloud.cloud-a {
+      top: 2%;
+      left: -8%;
+    }
+
+    .banner-cloud.cloud-b {
+      top: 20%;
+      left: 5%;
+      opacity: 0.66;
+      transform: scale(0.85);
+      animation-delay: -6s;
+    }
+
+    .banner-cloud.cloud-c {
+      top: 42%;
+      left: -3%;
+      opacity: 0.52;
+      transform: scale(0.72);
+      animation-delay: -11s;
+    }
+
+    .moon-side {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(190px, 31vw, 360px);
+      aspect-ratio: 1;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+    }
+
+    .moon-side::before {
+      content: "";
+      position: absolute;
+      inset: -16%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 214, 175, 0.36) 0%, rgba(215, 193, 144, 0.16) 44%, transparent 72%);
+      filter: blur(2px);
+      animation: pulse 4s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    .moon-side img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-title {
+      position: absolute;
+      left: 4.5%;
+      bottom: 8%;
+      z-index: 6;
+      background: rgba(15, 24, 34, 0.55);
+      border: 1px solid rgba(212, 225, 236, 0.2);
+      border-radius: 10px;
+      padding: 0.55rem 0.9rem;
+      backdrop-filter: blur(3px);
+    }
+
+    .banner-title h1 {
+      font-size: clamp(1.25rem, 2.4vw, 2rem);
+      letter-spacing: 0.06em;
+      font-weight: 400;
+      color: #dae8f2;
+    }
+
+    .banner-title p {
+      font-family: "Special Elite", "Courier New", monospace;
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-size: clamp(0.58rem, 1.1vw, 0.78rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .back-home {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 225, 236, 0.28);
+      background: rgba(15, 24, 34, 0.65);
+      color: #dbe7f0;
+      text-decoration: none;
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      backdrop-filter: blur(4px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .back-home:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      background: rgba(20, 32, 44, 0.78);
+    }
+
+    .content {
+      background: rgba(18, 30, 42, 0.72);
+      border: 1px solid rgba(205, 220, 231, 0.14);
+      border-radius: 20px;
+      padding: clamp(1.2rem, 2.4vw, 2.2rem);
+      box-shadow: inset 0 1px 0 rgba(238, 246, 252, 0.05), 0 14px 28px rgba(7, 13, 19, 0.3);
+    }
+
+    .content h2 {
+      color: #d9e7f1;
+      letter-spacing: 0.04em;
+      font-size: clamp(1.2rem, 2vw, 1.7rem);
+      margin-bottom: 0.95rem;
+      font-weight: 500;
+    }
+
+    .content p {
+      font-size: clamp(1.05rem, 1.75vw, 1.3rem);
+      color: #c8d7e2;
+      margin-bottom: 1rem;
+      text-wrap: pretty;
+    }
+
+    .fallback-cloud {
+      background: radial-gradient(ellipse at center, rgba(180, 198, 210, 0.35), rgba(180, 198, 210, 0.06) 60%, transparent 70%);
+      border-radius: 60%;
+      min-height: 100px;
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translateX(-1.2%) translateY(0);
+      }
+      100% {
+        transform: translateX(1.8%) translateY(-1.4%);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.96);
+        opacity: 0.78;
+      }
+      100% {
+        transform: scale(1.06);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .banner {
+        min-height: 400px;
+      }
+
+      .cloud-stack {
+        width: 100%;
+        left: -22%;
+        top: -3%;
+      }
+
+      .moon-side {
+        top: 44%;
+        right: 2%;
+        width: clamp(170px, 43vw, 300px);
+      }
+
+      .banner-title {
+        left: 5%;
+        right: 5%;
+        bottom: 4%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="back-home" href="index.html#branchesSection" aria-label="Back to branches section on homepage">← back to moon</a>
+
+  <div class="page-wrap">
+    <section class="banner" aria-label="Cloud and moon banner">
+      <div class="cloud-stack" aria-hidden="true">
+        <img class="banner-cloud cloud-a" id="cloudA" alt="" />
+        <img class="banner-cloud cloud-b" id="cloudB" alt="" />
+        <img class="banner-cloud cloud-c" id="cloudC" alt="" />
+      </div>
+
+      <div class="moon-side">
+        <img id="moonImage" alt="Moon illustration" />
+      </div>
+
+      <div class="banner-title">
+        <h1>Cloud Letters, Moon Witness</h1>
+        <p>a new page inspired by your index scene</p>
+      </div>
+    </section>
+
+    <section class="content" aria-label="Main English content">
+      <h2>Night Journal from a Floating City</h2>
+      <p>At the edge of the harbor, the city pretends to sleep, but every window tells a different story. A tailor keeps her lamp on because she says moonlight cannot choose the right thread. A bookseller drinks tea beside crates of damp paper and listens for the first tram. Two students rehearse a debate in whispers while a street cat sits between them like an old professor. From above, the roofs look calm, yet inside each room there is movement, revision, and quiet courage. I walk through these streets to remember that progress is rarely loud. It is built from small choices repeated with care: one page rewritten, one apology accepted, one promise kept before dawn.</p>
+      <p>When I was younger, I believed creativity arrived like lightning. I waited for dramatic moments, for a perfect idea to crack open the sky. Age gave me a different teacher. Most meaningful work arrives as weather. It gathers slowly, shifts direction, and asks for patience. Some days you only notice one new line in a notebook. Some days you erase everything and still feel grateful. The craft is not about always producing; it is about staying present long enough to notice what wants to be made. In that sense, clouds are not obstacles to the moon. They are part of the same conversation, a living texture that makes brightness feel earned.</p>
+      <p>In our studio, we keep a wall of unfinished fragments. There are rejected headlines, broken layouts, awkward sketches, and photographs with poor focus. Visitors often ask why we display failed attempts so proudly. The answer is simple: unfinished work is evidence of trust. It proves we are willing to begin before certainty, to test an instinct, to let the process teach us what planning could not. A polished piece may carry authority, but a rough draft carries heat. It records the exact moment when fear was present and action happened anyway. That is the moment I want to protect, because it is the birthplace of voice.</p>
+      <p>Tonight the wind moves from the river toward the market, carrying the smell of citrus peel and wet stone. Neon signs flicker in puddles, and scooters pass like quick commas in a long sentence. I stand under a balcony and think about the people who shaped me without ever calling themselves mentors: my grandmother, who folded stories into dumplings; a teacher, who marked my essays with questions instead of corrections; a friend, who once said that rest is also a form of discipline. Their lessons return whenever I hurry too much. They remind me that attention is a moral choice. Where we place it becomes the architecture of our lives.</p>
+      <p>By midnight the clouds thin, and the moon appears like a deliberate brushstroke on dark silk. Nothing magical happens in the theatrical sense. No orchestra swells, no hidden door opens. Yet I feel the familiar adjustment inside my chest: a quiet willingness to continue. Tomorrow will bring deadlines, unclear feedback, and practical limits. It will also bring another chance to make something honest, useful, and alive. That is enough. If this page offers anything, let it be this small permission: start where you are, work with what you have, and keep room for wonder. The sky does not ask us to be flawless. It asks us to look up, then to begin.</p>
+    </section>
+  </div>
+
+  <script>
+    async function useIndexAssets() {
+      const cloudNodes = [
+        document.getElementById("cloudA"),
+        document.getElementById("cloudB"),
+        document.getElementById("cloudC")
+      ];
+      const moonNode = document.getElementById("moonImage");
+
+      cloudNodes.forEach((node) => node.classList.add("fallback-cloud"));
+      moonNode.style.background = "radial-gradient(circle, rgba(242,225,180,0.9) 0%, rgba(214,190,140,0.8) 55%, rgba(180,155,108,0.5) 72%, transparent 78%)";
+      moonNode.style.borderRadius = "50%";
+
+      try {
+        const response = await fetch("./index.html", { cache: "no-store" });
+        if (!response.ok) {
+          return;
+        }
+
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const cloudSrc = doc.querySelector(".cloud-left")?.getAttribute("src");
+        const moonSrc = doc.querySelector(".moon-wrap img")?.getAttribute("src");
+
+        if (cloudSrc) {
+          cloudNodes.forEach((node) => {
+            node.src = cloudSrc;
+            node.classList.remove("fallback-cloud");
+          });
+        }
+
+        if (moonSrc) {
+          moonNode.src = moonSrc;
+          moonNode.style.background = "none";
+        }
+      } catch (error) {
+        // Keep fallback visual silently.
+      }
+    }
+
+    useIndexAssets();
+  </script>
+</body>
+</html>
