@@ -126,24 +126,17 @@ body::before {
   100% { opacity: 0.85; transform: translateY(0); }
 }
 
-
-
-
-  100% { opacity: 1; transform: translate(-50%, -50%) rotate(-1deg) scale(1); }
-}
-
-
-  100% { opacity: 0.7; }
-}
-
 .scroll-hint {
   position: absolute;
-  bottom: 3rem;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 0.65rem;
   letter-spacing: 0.4em;
   color: #4a6a80;
   text-transform: uppercase;
   animation: bob 2s ease-in-out infinite;
+  white-space: nowrap;
 }
 
 @keyframes moonPulse {
@@ -151,8 +144,8 @@ body::before {
   100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
 }
 @keyframes bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
 }
 
 /* ═══ BRANCHES SECTION ═══ */
@@ -631,8 +624,8 @@ body::before {
       <!-- Project One cutout on moon -->
       <div class="cutout-on-moon" id="moonCutout">
         <a href="project-1.html" onclick="zoomTo(event, this)" class="cutout-link cutout-moon">
-          <span class="cutout-word cutout-moon-word" style="transform: rotate(4deg);">Project</span>
-          <span class="cutout-word cutout-moon-word" style="transform: rotate(-2.5deg); margin-top: 0.2rem;">One</span>
+          <span class="cutout-word cutout-moon-word" style="transform: rotate(4deg);">Creative/Critical</span>
+          <span class="cutout-word cutout-moon-word" style="transform: rotate(-2.5deg); margin-top: 0.2rem;">Piece</span>
         </a>
       </div>
     </div>
@@ -662,7 +655,7 @@ body::before {
   <a href="project1.html" onclick="zoomTo(event, this)" class="nav-card">
     <div class="nav-pin"></div>
     <div class="nav-string"></div>
-    <span class="nav-label">Project One</span>
+    <span class="nav-label">Creative/Critical Piece</span>
   </a>
   <a href="project2.html" onclick="zoomTo(event, this)" class="nav-card">
     <div class="nav-pin"></div>
