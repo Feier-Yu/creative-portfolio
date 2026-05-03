@@ -149,7 +149,7 @@ body::before {
 }
 
 /* ═══ BRANCHES SECTION ═══ */
-.branches-section {
+.moon-section {
   position: relative; z-index: 2;
   height: 1100px;
   overflow: visible;
@@ -529,6 +529,116 @@ body::before {
 
 
 
+/* Branches section */
+.branches-section {
+  position: relative;
+  z-index: 9;
+  min-height: 1000px;
+  padding-top: 10vh;
+  margin-bottom: 4vh;
+  overflow: hidden;
+}
+.branches-scene {
+  position: relative;
+  min-height: 560px;
+}
+.branch {
+  position: absolute;
+  left: -18vw;
+  width: clamp(480px, 68vw, 980px);
+  height: auto;
+  transform-origin: left center;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  mix-blend-mode: multiply;
+  opacity: 0.97;
+  filter: brightness(0.78) contrast(1.38) saturate(0.75) drop-shadow(0 8px 18px rgba(4, 3, 2, 0.5));
+}
+.branch-1 {
+  top: 8%;
+  transform: rotate(-22deg);
+  width: clamp(520px, 74vw, 1060px);
+}
+.branch-3 {
+  top: -30%;
+  transform: rotate(10deg);
+  width: clamp(490px, 68vw, 980px);
+}
+.branch-photo-link {
+  position: absolute;
+  top: 45%;
+  left: clamp(180px, 25vw, 360px);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.28rem;
+  text-decoration: none;
+  transform: rotate(-10deg);
+  z-index: 12;
+}
+.branch-photo-word {
+  display: inline-block;
+  background: rgba(242, 235, 222, 0.92);
+  color: #17130e;
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: clamp(0.78rem, 1.2vw, 1rem);
+  letter-spacing: 0.06em;
+  padding: 0.18em 0.42em;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.24);
+  transition: transform 0.32s ease, box-shadow 0.32s ease;
+}
+.branch-photo-link:hover .branch-photo-word,
+.branch-photo-link:focus-visible .branch-photo-word {
+  transform: translateX(5px);
+  box-shadow: 3px 5px 11px rgba(0, 0, 0, 0.34);
+}
+
+@keyframes sunArcRise {
+  0%   { opacity: 0;   transform: translate(-76vw,    0)     scale(0.7);  filter: drop-shadow(0 0 0 rgba(255,171,74,0)); }
+  15%  { opacity: 1;   transform: translate(-73vw,   -3vw)  scale(0.82); filter: drop-shadow(0 0  8px rgba(255,196,106,0.3)); }
+  40%  {              transform: translate(-65vw,  -5.5vw)  scale(0.91); filter: drop-shadow(0 0 14px rgba(255,196,106,0.45)); }
+  70%  {              transform: translate(-53vw,  -7vw)    scale(0.97); filter: drop-shadow(0 0 20px rgba(255,196,106,0.56)); }
+  100% { opacity: 1;  transform: translate(-38vw,  -8vw)    scale(1);    filter: drop-shadow(0 0 24px rgba(255,196,106,0.62)) drop-shadow(0 0 70px rgba(255,148,56,0.4)); }
+}
+
+.branches-sun {
+  position: absolute;
+  top: 22%;
+  right: 12%;
+  width: clamp(184px, 26vw, 340px);
+  height: auto;
+  opacity: 0;
+  z-index: 100;
+  pointer-events: none;
+  filter: drop-shadow(0 0 0 rgba(255, 171, 74, 0.2));
+}
+
+.branches-section.sun-rise .branches-sun {
+  animation: sunArcRise .9s linear forwards;
+}
+
+@media (max-width: 780px) {
+  .branches-section {
+    min-height: 460px;
+  }
+  .branches-scene {
+    min-height: 460px;
+  }
+  .branch {
+    left: -32vw;
+    width: clamp(300px, 88vw, 560px);
+  }
+  .branch-photo-link {
+    left: clamp(95px, 32vw, 190px);
+    top: 43%;
+  }
+  .branches-sun {
+    right: 5%;
+    top: 17%;
+  }
+}
+
 /* Zoom overlay */
 
 .bottom-nav {
@@ -613,7 +723,7 @@ body::before {
 </section>
 
 <!-- ═══ MOON & CLOUDS ═══ -->
-<section class="branches-section" id="branchesSection">
+<section class="moon-section" id="moonSection">
   <div class="moon-scene">
     <div class="moon-glow"></div>
 
@@ -650,6 +760,21 @@ body::before {
     <div class="fog"></div>
   </div>
 </section>
+<!-- ═══ BRANCHES ═══ -->
+<section class="branches-section" id="branchesSection">
+  <div class="branches-scene">
+    <img class="branch branch-1" src="image/branch-1.png" alt="">
+    <img class="branch branch-3" src="image/branch-3.png" alt="">
+
+    <a href="project-2.html" onclick="zoomTo(event, this)" class="branch-photo-link" id="branchPhotoTrigger">
+      <span class="branch-photo-word" style="transform: rotate(2deg);">Photo</span>
+      <span class="branch-photo-word" style="transform: rotate(-2deg); margin-left: 0.4rem;">Essay</span>
+    </a>
+
+    <img class="branches-sun" id="branchesSun" src="image/sun.png" alt="" aria-hidden="true">
+  </div>
+
+</section>
 
 <div class="bottom-nav">
   <a href="project-1.html" onclick="zoomTo(event, this)" class="nav-card">
@@ -657,12 +782,12 @@ body::before {
     <div class="nav-string"></div>
     <span class="nav-label">Creative/Critical Piece</span>
   </a>
-  <!-- <a href="project2.html" onclick="zoomTo(event, this)" class="nav-card">
+  <a href="project-2.html" onclick="zoomTo(event, this)" class="nav-card">
     <div class="nav-pin"></div>
     <div class="nav-string"></div>
-    <span class="nav-label">Project Two</span>
+    <span class="nav-label">Photo Essay</span>
   </a>
-  <a href="project3.html" onclick="zoomTo(event, this)" class="nav-card">
+  <!-- <a href="project3.html" onclick="zoomTo(event, this)" class="nav-card">
     <div class="nav-pin"></div>
     <div class="nav-string"></div>
     <span class="nav-label">Project Three</span>
@@ -770,8 +895,29 @@ function zoomTo(e, el) {
         }
       });
     }, { threshold: 0.3 });
-    branchObserver.observe(document.getElementById('branchesSection'));
+    branchObserver.observe(document.getElementById('moonSection'));
   }
+})();
+
+// Branches hover label - wake the sun
+(function() {
+  var trigger = document.getElementById('branchPhotoTrigger');
+  var section = document.getElementById('branchesSection');
+
+  if (!trigger || !section) return;
+
+  function riseSun() {
+    section.classList.add('sun-rise');
+  }
+
+  function hideSun() {
+    section.classList.remove('sun-rise');
+  }
+
+  trigger.addEventListener('mouseenter', riseSun);
+  trigger.addEventListener('mouseleave', hideSun);
+  trigger.addEventListener('focus', riseSun);
+  trigger.addEventListener('blur', hideSun);
 })();
 
 // Parallax

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Branch & Sun Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Special+Elite&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #1a2a3a;
+      --ink: #d8e4ed;
+      --muted: #8da7bb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse 110% 55% at 50% 0%, #f5cfa0 0%, #e8a96a 18%, #c97a5e 36%, #8a5a7a 58%, #3d3a6e 78%, #1e1e42 100%);
+      color: var(--ink);
+      font-family: "Cormorant Garamond", serif;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 1.5rem 0 4rem;
+    }
+
+    .page-wrap {
+      width: min(1080px, 92vw);
+      margin: 0 auto;
+    }
+
+    /* ── Banner ── */
+    .banner {
+      position: relative;
+      min-height: clamp(290px, 42vw, 470px);
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 68% 30%, rgba(160, 210, 240, 0.18) 0%, transparent 44%),
+        linear-gradient(155deg, rgba(14, 34, 62, 0.82), rgba(22, 52, 88, 0.68));
+      box-shadow: 0 18px 42px rgba(4, 10, 4, 0.44);
+      margin-bottom: 2.5rem;
+      isolation: isolate;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .banner.loaded { opacity: 1; }
+
+    /* Left branch stack */
+    .branch-stack {
+      position: absolute;
+      left: -8%;
+      top: 0;
+      width: 58%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .banner-branch {
+      position: absolute;
+      width: 90%;
+      max-width: 720px;
+      object-fit: contain;
+      filter: brightness(0.75) contrast(1.2) saturate(0.7) drop-shadow(0 6px 12px rgba(4, 10, 2, 0.45));
+      animation: sway 18s ease-in-out infinite alternate;
+      transform-origin: left center;
+    }
+    .banner-branch.branch-a {
+      top: 0%;
+      left: -4%;
+      opacity: 0.85;
+    }
+    .banner-branch.branch-b {
+      top: 26%;
+      left: 2%;
+      opacity: 0.65;
+      transform: scaleX(-1) rotate(6deg);
+      animation-delay: -7s;
+    }
+    .banner-branch.branch-c {
+      top: 52%;
+      left: -6%;
+      opacity: 0.48;
+      transform: rotate(12deg) scale(0.82);
+      animation-delay: -13s;
+    }
+    .banner-branch.branch-d {
+      top: -10%;
+      left: 8%;
+      opacity: 0.35;
+      transform: rotate(-6deg) scale(0.68);
+      animation-delay: -4s;
+    }
+
+    /* Right branch stack in banner */
+    .branch-stack-right {
+      position: absolute;
+      right: -6%;
+      top: 0;
+      width: 46%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .banner-branch-right {
+      position: absolute;
+      width: 80%;
+      max-width: 580px;
+      object-fit: contain;
+      filter: brightness(0.72) contrast(1.18) saturate(0.68) drop-shadow(0 6px 14px rgba(4, 10, 2, 0.4));
+      animation: sway-r 20s ease-in-out infinite alternate;
+      transform-origin: right center;
+    }
+    .banner-branch-right.rbranch-a {
+      top: -4%;
+      right: -6%;
+      opacity: 0.72;
+      transform: scaleX(-1) rotate(-5deg);
+      animation-delay: -3s;
+    }
+    .banner-branch-right.rbranch-b {
+      top: 30%;
+      right: 0%;
+      opacity: 0.50;
+      transform: scaleX(-1) rotate(8deg) scale(0.78);
+      animation-delay: -9s;
+    }
+    .banner-branch-right.rbranch-c {
+      top: 58%;
+      right: -4%;
+      opacity: 0.36;
+      transform: scaleX(-1) rotate(16deg) scale(0.65);
+      animation-delay: -15s;
+    }
+
+    /* Right sun */
+    .sun-side {
+      position: absolute;
+      right: 6%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(160px, 26vw, 300px);
+      aspect-ratio: 1;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+    }
+    .sun-side::before {
+      content: "";
+      position: absolute;
+      inset: -22%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 210, 100, 0.38) 0%, rgba(255, 170, 60, 0.18) 44%, transparent 70%);
+      filter: blur(4px);
+      animation: sunpulse 5s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    .sun-side img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0 28px rgba(255, 185, 60, 0.55));
+    }
+
+    .banner-title {
+      position: absolute;
+      left: 4.5%;
+      bottom: 8%;
+      z-index: 6;
+      background: rgba(12, 30, 58, 0.58);
+      border: 1px solid rgba(200, 220, 190, 0.22);
+      border-radius: 10px;
+      padding: 0.55rem 0.9rem;
+      backdrop-filter: blur(3px);
+    }
+    .banner-title h1 {
+      font-size: clamp(1.25rem, 2.4vw, 2rem);
+      letter-spacing: 0.06em;
+      font-weight: 400;
+      color: #f5dfc8;
+    }
+    .banner-title p {
+      font-family: "Special Elite", "Courier New", monospace;
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-size: clamp(0.58rem, 1.1vw, 0.78rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── Back home ── */
+    .back-home {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 220, 190, 0.3);
+      background: rgba(12, 28, 54, 0.68);
+      color: #f2d8c0;
+      text-decoration: none;
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      backdrop-filter: blur(4px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .back-home:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+      background: rgba(16, 36, 68, 0.84);
+    }
+
+    /* ── Content wrapper (holds card + side branches) ── */
+    .content-outer {
+      position: relative;
+    }
+
+    /* Side branches decorating the content area */
+    .side-branch {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      filter: brightness(0.6) contrast(1.1) saturate(0.65) drop-shadow(0 4px 10px rgba(2, 8, 2, 0.5));
+      opacity: 0.55;
+    }
+    .side-branch-right-1 {
+      right: -6%;
+      top: 4%;
+      width: clamp(140px, 16vw, 230px);
+      transform: scaleX(-1) rotate(-14deg);
+    }
+    .side-branch-right-2 {
+      right: -4%;
+      top: 36%;
+      width: clamp(120px, 13vw, 200px);
+      transform: scaleX(-1) rotate(8deg);
+      opacity: 0.38;
+    }
+    .side-branch-left-1 {
+      left: -5%;
+      top: 18%;
+      width: clamp(130px, 14vw, 210px);
+      transform: rotate(10deg);
+      opacity: 0.4;
+    }
+    .side-branch-left-2 {
+      left: -4%;
+      top: 54%;
+      width: clamp(110px, 12vw, 185px);
+      transform: rotate(-8deg) scaleY(-1);
+      opacity: 0.32;
+    }
+    .side-branch-right-3 {
+      right: -5%;
+      top: 66%;
+      width: clamp(125px, 14vw, 200px);
+      transform: scaleX(-1) rotate(-6deg);
+      opacity: 0.42;
+    }
+    .side-branch-right-4 {
+      right: -3%;
+      top: 88%;
+      width: clamp(100px, 11vw, 170px);
+      transform: scaleX(-1) rotate(12deg) scale(0.85);
+      opacity: 0.28;
+    }
+
+    /* ── Content card ── */
+    .content {
+      position: relative;
+      z-index: 1;
+      background: rgba(14, 30, 54, 0.72);
+      border: 1px solid rgba(190, 210, 180, 0.14);
+      border-radius: 20px;
+      padding: clamp(1.2rem, 2.4vw, 2.2rem);
+      box-shadow: inset 0 1px 0 rgba(220, 238, 210, 0.05), 0 14px 28px rgba(4, 10, 2, 0.3);
+      margin-bottom: 1.5rem;
+    }
+
+    .content h2 {
+      color: #f0d9c4;
+      letter-spacing: 0.04em;
+      font-size: clamp(1.2rem, 2vw, 1.7rem);
+      margin-bottom: 0.95rem;
+      font-weight: 500;
+    }
+    .content p {
+      font-size: clamp(1.05rem, 1.75vw, 1.3rem);
+      color: #dcc8ba;
+      margin-bottom: 1rem;
+      text-wrap: pretty;
+    }
+
+    .poem { text-align: center; }
+    .poem p {
+      font-size: clamp(1.05rem, 1.75vw, 1.3rem);
+      color: #e0cec2;
+      margin-bottom: 0.45rem;
+      line-height: 1.9;
+    }
+    .poem-attribution {
+      text-align: right;
+      margin-top: 1.8rem;
+      padding-right: 3em;
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .section-spacer { height: 2rem; }
+
+    .essay-body {
+      max-width: 38em;
+      margin: 0 auto;
+    }
+    .essay-title {
+      text-align: center;
+      color: #cddec6;
+      font-size: clamp(1.2rem, 2vw, 1.7rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+    .essay-subtitle {
+      text-align: center;
+      font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+      color: var(--muted);
+      margin-bottom: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+    .essay-body p {
+      font-size: clamp(1.05rem, 1.75vw, 1.3rem);
+      color: #dcc8ba;
+      margin-bottom: 1rem;
+      text-indent: 2em;
+      text-align: justify;
+      text-wrap: pretty;
+    }
+    .essay-author {
+      margin-top: 2rem;
+      text-align: right;
+      max-width: 38em;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .essay-author p {
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: clamp(0.75rem, 1.15vw, 0.9rem);
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .works-cited-section { margin-top: 0; }
+    .works-cited {
+      max-width: 38em;
+      margin: 0 auto;
+    }
+    .works-cited h3 {
+      color: #f0d9c4;
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .works-cited p {
+      font-size: clamp(0.85rem, 1.3vw, 1rem);
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      padding-left: 2em;
+      text-indent: -2em;
+      line-height: 1.7;
+    }
+
+    /* ── Snow & scroll hint ── */
+    #snow-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 99;
+    }
+    .scroll-hint {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%; height: 120px;
+      background: linear-gradient(to bottom, transparent, rgba(14, 30, 58, 0.88) 70%, rgba(10, 20, 42, 1));
+      pointer-events: none;
+      z-index: 98;
+      transition: opacity 0.8s ease;
+    }
+    .scroll-hint.hidden { opacity: 0; }
+
+    /* ── Animations ── */
+    @keyframes sway {
+      0%   { transform: rotate(0deg) translateX(0); }
+      100% { transform: rotate(1.5deg) translateX(0.8%); }
+    }
+    @keyframes sway-r {
+      0%   { transform: scaleX(-1) rotate(0deg) translateX(0); }
+      100% { transform: scaleX(-1) rotate(-1.2deg) translateX(-0.6%); }
+    }
+    @keyframes sunpulse {
+      0%   { transform: scale(0.94); opacity: 0.72; }
+      100% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @media (max-width: 860px) {
+      .banner { min-height: 380px; }
+      .branch-stack { width: 100%; left: -18%; top: -4%; }
+      .branch-stack-right { display: none; }
+      .sun-side { right: 2%; width: clamp(140px, 38vw, 240px); }
+      .banner-title { left: 5%; right: 5%; bottom: 4%; }
+      .side-branch-right-1,
+      .side-branch-right-2,
+      .side-branch-right-3,
+      .side-branch-right-4,
+      .side-branch-left-1,
+      .side-branch-left-2 { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="snow-canvas" aria-hidden="true"></canvas>
+  <div class="scroll-hint" id="scrollHint" aria-hidden="true"></div>
+  <a class="back-home" href="index.html#branchesSection" aria-label="Back to branches section on homepage">← back to home</a>
+
+  <div class="page-wrap">
+
+    <!-- ── Banner: branches left, sun right ── -->
+    <section class="banner" id="pageBanner" aria-label="Branch and sun banner">
+      <div class="branch-stack" aria-hidden="true">
+        <img class="banner-branch branch-a" src="image/branch-1.png" alt="" />
+        <img class="banner-branch branch-b" src="image/branch-2.png" alt="" />
+        <img class="banner-branch branch-c" src="image/branch-3.png" alt="" />
+      </div>
+
+      <div class="branch-stack-right" aria-hidden="true">
+        <img class="banner-branch-right rbranch-a" src="image/branch-2.png" alt="" />
+        <img class="banner-branch-right rbranch-b" src="image/branch-4.png" alt="" />
+        <img class="banner-branch-right rbranch-c" src="image/branch-1.png" alt="" />
+      </div>
+
+      <!-- <div class="sun-side">
+        <img src="image/sun.png" alt="" aria-hidden="true" />
+      </div> -->
+
+      <div class="banner-title">
+        <h1>Title Placeholder</h1>
+        <p>Subtitle · Theme · Year</p>
+      </div>
+    </section>
+
+    <!-- ── Content: card + decorative side branches ── -->
+    <div class="content-outer">
+
+      <section class="content" aria-label="Main content">
+        <div class="poem">
+          <p>Placeholder line one of the poem</p>
+          <p>a second line follows here</p>
+          <p>then a third, quieter now</p>
+          <p>and a final line that breathes.</p>
+        </div>
+        <div class="poem-attribution">—Author / Source</div>
+
+        <div class="section-spacer"></div>
+
+        <h2 class="essay-title">Essay Title Goes Here</h2>
+        <p class="essay-subtitle">Subtitle or Theme of the Piece</p>
+
+        <div class="essay-body">
+          <p>This is the opening paragraph of the essay. It introduces the central theme, establishes the context, and draws the reader into the argument. Replace this text with your actual content when ready.</p>
+          <p>The second paragraph develops the main idea further. It might introduce a key quotation, reference a work, or present a contrasting perspective. All placeholder sentences are written to approximate the length and rhythm of real prose.</p>
+          <p>A third paragraph continues the analysis. It engages with the source material in depth, weaving observation and interpretation together. The tone remains measured and reflective throughout.</p>
+          <p>The fourth paragraph shifts slightly — perhaps toward a broader cultural or historical lens. It situates the argument within a larger framework and anticipates potential objections.</p>
+          <p>The concluding paragraph draws the threads together. It does not simply repeat what came before but arrives at a new vantage point, leaving the reader with something to carry forward.</p>
+        </div>
+
+        <div class="essay-author">
+          <p>Author Name</p>
+          <p>Date / Context</p>
+        </div>
+      </section>
+
+      <section class="content works-cited-section" aria-label="Works Cited">
+        <div class="works-cited">
+          <h3>Works Cited</h3>
+          <p>Author, First. <em>Title of Work</em>. Publisher, Year.</p>
+          <p>Author, Second. <em>Another Title</em>. Publisher, Year.</p>
+          <p>Director, Name, director. <em>Film Title</em>. Year.</p>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <!-- Snow -->
+  <script>
+    (function () {
+      const canvas = document.getElementById('snow-canvas');
+      const ctx = canvas.getContext('2d');
+      let w, h;
+      const flakes = [];
+      const COUNT = 100;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      for (let i = 0; i < COUNT; i++) {
+        flakes.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 1.8 + 0.4,
+          speed: Math.random() * 0.55 + 0.18,
+          wind: Math.random() * 0.25 - 0.12,
+          opacity: Math.random() * 0.35 + 0.08
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (const f of flakes) {
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(200, 225, 245, ${f.opacity})`;
+          ctx.fill();
+          f.y += f.speed;
+          f.x += f.wind + Math.sin(f.y * 0.012) * 0.18;
+          if (f.y > h) { f.y = -5; f.x = Math.random() * w; }
+          if (f.x > w) f.x = 0;
+          if (f.x < 0) f.x = w;
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+
+  <!-- Banner fade-in -->
+  <script>
+    document.getElementById('pageBanner').classList.add('loaded');
+  </script>
+
+  <!-- Scroll hint -->
+  <script>
+    (function () {
+      const hint = document.getElementById('scrollHint');
+      window.addEventListener('scroll', function () {
+        hint.classList.toggle('hidden', window.scrollY > 80);
+      });
+    })();
+  </script>
+</body>
+</html>
