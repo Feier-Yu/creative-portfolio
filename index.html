@@ -1,1019 +1,1212 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Feier Yu — Reimagining Asia</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: #1a2a3a;
-  font-family: 'Cormorant Garamond', serif;
-  overflow-x: hidden;
-}  
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 130% 60% at 50% 0%, #2a3e52 0%, transparent 55%),
-    radial-gradient(ellipse 80% 50% at 0% 70%, #1e3248 0%, transparent 55%),
-    radial-gradient(ellipse 70% 45% at 100% 60%, #223a50 0%, transparent 52%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Fixed canvases */
-#stars, #grain, #snow {
-  position: fixed; inset: 0; pointer-events: none;
-}
-#stars { z-index: 1; }
-#grain { z-index: 1; opacity: 0.036; mix-blend-mode: multiply; }
-#snow { z-index: 20; }
-
-/* ═══ TITLE SECTION ═══ */
-.title-section {
-  position: relative; z-index: 2;
-  height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  will-change: transform, opacity;
-}
-.title-name {
-  font-size: clamp(2.2rem, 5.5vw, 4.5rem);
-  font-weight: 300;
-  color: #d0dfe8;
-  letter-spacing: 0.15em;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.4);
-}
-.title-sub {
-  font-size: clamp(0.8rem, 1.6vw, 1.2rem);
-  font-weight: 300;
-  font-style: italic;
-  color: #7a9ab0;
-  letter-spacing: 0.3em;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.3);
-}
-
-/* Ink drip title animation */
-
-
-@keyframes inkReveal {
-  0% {
-    opacity: 0;
-    filter: blur(8px);
-    transform: scaleY(0.7) translateY(-10px);
-    letter-spacing: 0.4em;
-  }
-  30% {
-    opacity: 0.6;
-    filter: blur(3px);
-  }
-  60% {
-    filter: blur(1px);
-    transform: scaleY(1.02) translateY(2px);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0);
-    transform: scaleY(1) translateY(0);
-    letter-spacing: 0.15em;
-  }
-}
-/* Ink drip decorations */
-.ink-drip {
-  position: absolute;
-  width: 2px;
-  background: linear-gradient(to bottom, rgba(200,215,230,0.6), transparent);
-  border-radius: 0 0 2px 2px;
-  opacity: 0;
-  animation: drip var(--drip-duration) ease-in var(--drip-delay) forwards;
-}
-@keyframes drip {
-  0% {
-    height: 0;
-    opacity: 0;
-    top: var(--drip-start);
-  }
-  10% {
-    opacity: 0.7;
-  }
-  70% {
-    opacity: 0.4;
-  }
-  100% {
-    height: var(--drip-length);
-    opacity: 0;
-    top: var(--drip-start);
-  }
-}
-
-/* Snow accumulation on title */
-.snow-shelf {
-  position: absolute;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0;
-  animation: snowBuild 4s ease 3s forwards;
-}
-@keyframes snowBuild {
-  0% { opacity: 0; transform: translateY(-3px); }
-  100% { opacity: 0.85; transform: translateY(0); }
-}
-
-.scroll-hint {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.65rem;
-  letter-spacing: 0.4em;
-  color: #4a6a80;
-  text-transform: uppercase;
-  animation: bob 2s ease-in-out infinite;
-  white-space: nowrap;
-}
-
-@keyframes moonPulse {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
-  100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
-}
-@keyframes bob {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(6px); }
-}
-
-/* ═══ BRANCHES SECTION ═══ */
-.moon-section {
-  position: relative; z-index: 2;
-  height: 1100px;
-  overflow: visible;
-  margin-top: 5vh;
-  
-}
-.moon-scene {
-  position: relative;
-  width: 100%; height: 100%;
-  overflow: visible;
-}
-.moon-glow {
-  position: absolute;
-  width: min(55vw, 550px); height: min(55vw, 550px);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(210,195,160,0.3) 0%, rgba(200,180,130,0.15) 40%, rgba(180,160,110,0.05) 60%, transparent 75%);
-  z-index: 1; opacity: 0.9;
-}
-.moon-wrap {
-  position: absolute;
-  width: 40vh; height: 40vh;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 8;
-  cursor: pointer;
-}
-.moon-wrap::after {
-  content: '';
-  position: absolute;
-  top: -30%; left: -30%;
-  width: 160%; height: 160%;
-  border-radius: 50%;
-}
-.moon-wrap img { width: 100%; height: 100%; object-fit: contain; }
-
-.cloud {
-  position: absolute;
-  pointer-events: none; user-select: none;
-}
-.cloud-bg-2 {
-  width: 100vw;
-  min-width: 100%;
-  min-height: 100%;
-  bottom: 0; right: 0;
-  left: 0;
-  object-fit: cover;
-  opacity: 0.1;
-  z-index: 3;
-  filter: brightness(0.5) saturate(0.4) sepia(0.3) hue-rotate(180deg);
-  mix-blend-mode: screen;
-}
-.cloud-left {
-  width: max(62vw, 760px);
-  top: 36%; left: -6%;
-  opacity: 0.94; z-index: 6;
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.15s;
-}
-.cloud-left.parted {
-  transform: translateX(-30vw); opacity: 0.08;
-}
-.cloud-right {
-  width: max(58vw, 720px);
-  top: 28%; right: 11%;
-  opacity: 0.92; transform: scaleX(-1); z-index: 6;
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.25s;
-}
-.cloud-right.parted {
-  transform: scaleX(-1) translateX(30vw); opacity: 0.08;
-}
-.cloud-top {
-  width: max(70vw, 860px);
-  top: 41%; right: -21%;
-  opacity: 0.9; z-index: 7;
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.1s;
-}
-.cloud-top.parted {
-  transform: translateY(-18vh); opacity: 0.08;
-}
-.cloud-bot {
-  bottom: 44%; right: -10%;
-  opacity: 0.88; z-index: 12;
-  transform: translateX(0);
-  transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease;
-  will-change: transform;
-
-  transition-delay: 0.2s;
-}
-.cloud-bot.parted {
-  transform: translateX(25vw);
-  opacity: 0.08;
-}
-
-.cloud-tl {
-  width: max(42vw, 520px);
-  left: -15%;
-  opacity: 0.86; z-index: 7;
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.3s;
-}
-.cloud-tl.parted {
-  transform: translate(-22vw, -12vh); opacity: 0.08;
-}
-.cloud-tr {
-  width: max(42vw, 520px);
-  top: 0%; right: -5%;
-  opacity: 0.84; transform: scaleX(-1); z-index: 7;
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.35s;
-}
-.cloud-tr.parted {
-  transform: scaleX(-1) translate(-22vw, -12vh); opacity: 0.08;
-}
-
-/* Fog at bottom */
-.fog {
-  position: absolute;
-  bottom: 0; left: 0; width: 100%; height: 20vh;
-  z-index: 15; pointer-events: none;
-  background: linear-gradient(to top, rgba(26,42,58,0.7) 0%, rgba(26,42,58,0.3) 40%, transparent 100%);
-  animation: fogDrift 12s ease-in-out infinite alternate;
-}
-@keyframes fogDrift {
-  0% { transform: translateX(-2%); opacity: 0.9; }
-  100% { transform: translateX(2%); opacity: 1; }
-}
-
-/* Project links */
-
-.cloud-extra-1 {
-  width: max(50vw, 620px);
-  top: 18%;
-  left: 8%;
-  opacity: 0.82;
-  z-index: 5;
-  transform: scaleX(-1) scaleY(0.95);
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.18s;
-}
-.cloud-extra-1.parted {
-  transform: scaleX(-1) scaleY(0.95) translateX(28vw); opacity: 0.08;
-}
-.cloud-extra-2 {
-  width: max(55vw, 680px);
-  bottom: 18%;
-  left: -12%;
-  opacity: 0.78;
-  z-index: 6;
-  transform: rotate(3deg);
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.28s;
-}
-.cloud-extra-2.parted {
-  transform: rotate(3deg) translate(-22vw, 12vh); opacity: 0.08;
-}
-.cloud-extra-3 {
-  width: max(48vw, 580px);
-  top: 55%;
-  right: -8%;
-  opacity: 0.85;
-  z-index: 5;
-  transform: scaleX(-1) rotate(-2deg);
-
-  transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
-  will-change: transform;
-
-  transition-delay: 0.22s;
-}
-.cloud-extra-3.parted {
-  transform: scaleX(-1) rotate(-2deg) translateX(28vw); opacity: 0.08;
-}
-
-
-/* Center clouds that part on hover */
-.cloud-center-left {
-  width: max(38vw, 460px);
-  top: 38%;
-  left: 20%;
-  opacity: 0.92;
-  z-index: 10;
-  transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease;
-  will-change: transform;
-
-  transition-delay: 0s;
-}
-.cloud-center-left.parted {
-  transform: translateX(-25vw);
-  opacity: 0.08;
-}
-.cloud-center-right {
-  width: max(38vw, 460px);
-  top: 35%;
-  right: 18%;
-  opacity: 0.92;
-  z-index: 10;
-  transform: scaleX(-1);
-  transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease;
-  will-change: transform;
-
-  transition-delay: 0.1s;
-}
-.cloud-center-right.parted {
-  transform: scaleX(-1) translateX(-25vw);
-  opacity: 0.08;
-}
-.cloud-center-top {
-  width: max(44vw, 540px);
-  top: 28%;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0.88;
-  z-index: 9;
-  transition: transform 2.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, opacity 2s ease 0.15s;
-  will-change: transform;
-
-  transition-delay: 0.2s;
-}
-.cloud-center-top.parted {
-  transform: translateX(-50%) translateY(-18vh);
-  opacity: 0.08;
-}
-
-
-.hand-arrow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(18vh, -2vh) rotate(-25deg);
-  z-index: 15;
-  pointer-events: none;
-  opacity: 0.4;
-  animation: arrowBob 3s ease-in-out infinite alternate;
-}
-@keyframes arrowBob {
-  0% { transform: translate(18vh, -2vh) rotate(-25deg); opacity: 0.4; }
-  100% { transform: translate(17.5vh, -1.5vh) rotate(-23deg); opacity: 0.5; }
-}
-
-
-
-
-
-
-/* Newspaper cutout style */
-
-
-
-
-
-
-
-
-
-
-
-.star-group:hover 
-
-
-
-
-
-
-
-
-
-
-
-.paper-strip:hover 
-
-
-
-
-
-
-
-/* The line itself */
-
-
-/* Clips */
-
-
-
-/* Clip pin */
-
-/* Hanging paper card */
-
-.clip-item:hover 
-/* Each card hangs at slightly different angle */
-
-.cutout-link-1 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, 30%);
-}
-.cutout-word {
-  display: inline-block;
-  background: rgba(245, 240, 232, 0.92);
-  color: #1a1a1a;
-  font-family: 'Special Elite', 'Courier New', monospace;
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(0.55rem, 1.2vw, 0.85rem);
-  letter-spacing: 0.05em;
-  padding: 0.15em 0.35em;
-  line-height: 1.2;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.cutout-link:hover .cutout-word {
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-}
-
-
-.cutout-on-moon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 0.15rem;
-  opacity: 0;
-  transition: opacity 1.2s ease 0.5s;
-}
-.cutout-on-moon.visible {
-  opacity: 1;
-}
-.cutout-moon {
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 0.15rem;
-  width: 100%;
-}
-.cutout-moon-word {
-  font-family: 'Special Elite', 'Courier New', monospace !important;
-  font-size: clamp(1.5rem, 4.2vw, 2.8rem) !important;
-  font-weight: 400 !important;
-  padding: 0.12em 0.35em !important;
-  background: rgba(240, 235, 225, 0.88) !important;
-}
-
-
-
-
-
-/* Branches section */
-.branches-section {
-  position: relative;
-  z-index: 9;
-  min-height: 1000px;
-  padding-top: 10vh;
-  margin-bottom: 4vh;
-  overflow: hidden;
-}
-.branches-scene {
-  position: relative;
-  min-height: 560px;
-}
-.branch {
-  position: absolute;
-  left: -18vw;
-  width: clamp(480px, 68vw, 980px);
-  height: auto;
-  transform-origin: left center;
-  object-fit: contain;
-  pointer-events: none;
-  user-select: none;
-  mix-blend-mode: multiply;
-  opacity: 0.97;
-  filter: brightness(0.78) contrast(1.38) saturate(0.75) drop-shadow(0 8px 18px rgba(4, 3, 2, 0.5));
-}
-.branch-1 {
-  top: 8%;
-  transform: rotate(-22deg);
-  width: clamp(520px, 74vw, 1060px);
-}
-.branch-3 {
-  top: -30%;
-  transform: rotate(10deg);
-  width: clamp(490px, 68vw, 980px);
-}
-.branch-photo-link {
-  position: absolute;
-  top: 45%;
-  left: clamp(180px, 25vw, 360px);
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.28rem;
-  text-decoration: none;
-  transform: rotate(-10deg);
-  z-index: 12;
-}
-.branch-photo-word {
-  display: inline-block;
-  background: rgba(242, 235, 222, 0.92);
-  color: #17130e;
-  font-family: 'Special Elite', 'Courier New', monospace;
-  font-size: clamp(0.78rem, 1.2vw, 1rem);
-  letter-spacing: 0.06em;
-  padding: 0.18em 0.42em;
-  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.24);
-  transition: transform 0.32s ease, box-shadow 0.32s ease;
-}
-.branch-photo-link:hover .branch-photo-word,
-.branch-photo-link:focus-visible .branch-photo-word {
-  transform: translateX(5px);
-  box-shadow: 3px 5px 11px rgba(0, 0, 0, 0.34);
-}
-
-@keyframes sunArcRise {
-  0%   { opacity: 0;   transform: translate(-76vw,    0)     scale(0.7);  filter: drop-shadow(0 0 0 rgba(255,171,74,0)); }
-  15%  { opacity: 1;   transform: translate(-73vw,   -3vw)  scale(0.82); filter: drop-shadow(0 0  8px rgba(255,196,106,0.3)); }
-  40%  {              transform: translate(-65vw,  -5.5vw)  scale(0.91); filter: drop-shadow(0 0 14px rgba(255,196,106,0.45)); }
-  70%  {              transform: translate(-53vw,  -7vw)    scale(0.97); filter: drop-shadow(0 0 20px rgba(255,196,106,0.56)); }
-  100% { opacity: 1;  transform: translate(-38vw,  -8vw)    scale(1);    filter: drop-shadow(0 0 24px rgba(255,196,106,0.62)) drop-shadow(0 0 70px rgba(255,148,56,0.4)); }
-}
-
-.branches-sun {
-  position: absolute;
-  top: 22%;
-  right: 12%;
-  width: clamp(184px, 26vw, 340px);
-  height: auto;
-  opacity: 0;
-  z-index: 100;
-  pointer-events: none;
-  filter: drop-shadow(0 0 0 rgba(255, 171, 74, 0.2));
-}
-
-.branches-section.sun-rise .branches-sun {
-  animation: sunArcRise .9s linear forwards;
-}
-
-@media (max-width: 780px) {
-  .branches-section {
-    min-height: 460px;
-  }
-  .branches-scene {
-    min-height: 460px;
-  }
-  .branch {
-    left: -32vw;
-    width: clamp(300px, 88vw, 560px);
-  }
-  .branch-photo-link {
-    left: clamp(95px, 32vw, 190px);
-    top: 43%;
-  }
-  .branches-sun {
-    right: 5%;
-    top: 17%;
-  }
-}
-
-/* Zoom overlay */
-
-.bottom-nav {
-  position: relative;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 3rem;
-  padding: 4rem 2rem 3rem;
-}
-.bottom-nav::before {
-  content: '';
-  position: absolute;
-  top: 2.2rem;
-  left: 15%;
-  width: 70%;
-  height: 1px;
-  background: rgba(180,170,150,0.3);
-}
-.nav-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.4s ease;
-}
-.nav-card:hover {
-  transform: translateY(3px);
-}
-.nav-pin {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(180,170,150,0.5);
-  margin-bottom: 4px;
-}
-.nav-string {
-  width: 1px;
-  height: 14px;
-  background: rgba(180,170,150,0.3);
-  margin-bottom: 2px;
-}
-.nav-label {
-  background: rgba(240, 235, 225, 0.88);
-  padding: 0.4rem 0.8rem;
-  font-family: 'Special Elite', 'Courier New', monospace;
-  font-size: clamp(0.6rem, 1vw, 0.82rem);
-  color: #1a1a1a;
-  letter-spacing: 0.08em;
-  box-shadow: 1px 2px 4px rgba(0,0,0,0.15);
-  transition: box-shadow 0.3s ease;
-}
-.nav-card:hover .nav-label {
-  box-shadow: 2px 3px 8px rgba(0,0,0,0.25);
-}
-.nav-card:nth-child(1) .nav-label { transform: rotate(-2deg); }
-.nav-card:nth-child(2) .nav-label { transform: rotate(1.5deg); }
-.nav-card:nth-child(3) .nav-label { transform: rotate(-1deg); }
-
-#overlay {
-  position: fixed; inset: 0;
-  background: #1a2a3a; z-index: 100;
-  pointer-events: none; opacity: 0;
-  transition: opacity 0.6s ease;
-}
-#overlay.fade-in { opacity: 1; pointer-events: all; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feier Yu — Reimagining Asia</title>
+  <link rel="icon" type="image/x-icon" href="image/favicon.ico">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Special+Elite&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #1a2a3a;
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 130% 60% at 50% 0%, #2a3e52 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 0% 70%, #1e3248 0%, transparent 55%),
+        radial-gradient(ellipse 70% 45% at 100% 60%, #223a50 0%, transparent 52%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Fixed canvases */
+    #stars,
+    #grain,
+    #snow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #stars {
+      z-index: 1;
+    }
+
+    #grain {
+      z-index: 1;
+      opacity: 0.036;
+      mix-blend-mode: multiply;
+    }
+
+    #snow {
+      z-index: 20;
+    }
+
+    /* ═══ TITLE SECTION ═══ */
+    .title-section {
+      position: relative;
+      z-index: 2;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      will-change: transform, opacity;
+    }
+
+    .title-name {
+      font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+      font-weight: 300;
+      color: #d0dfe8;
+      letter-spacing: 0.15em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .title-sub {
+      font-size: clamp(0.8rem, 1.6vw, 1.2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: #7a9ab0;
+      letter-spacing: 0.3em;
+      text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Ink drip title animation */
+
+
+    @keyframes inkReveal {
+      0% {
+        opacity: 0;
+        filter: blur(8px);
+        transform: scaleY(0.7) translateY(-10px);
+        letter-spacing: 0.4em;
+      }
+
+      30% {
+        opacity: 0.6;
+        filter: blur(3px);
+      }
+
+      60% {
+        filter: blur(1px);
+        transform: scaleY(1.02) translateY(2px);
+      }
+
+      100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: scaleY(1) translateY(0);
+        letter-spacing: 0.15em;
+      }
+    }
+
+    /* Ink drip decorations */
+    .ink-drip {
+      position: absolute;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(200, 215, 230, 0.6), transparent);
+      border-radius: 0 0 2px 2px;
+      opacity: 0;
+      animation: drip var(--drip-duration) ease-in var(--drip-delay) forwards;
+    }
+
+    @keyframes drip {
+      0% {
+        height: 0;
+        opacity: 0;
+        top: var(--drip-start);
+      }
+
+      10% {
+        opacity: 0.7;
+      }
+
+      70% {
+        opacity: 0.4;
+      }
+
+      100% {
+        height: var(--drip-length);
+        opacity: 0;
+        top: var(--drip-start);
+      }
+    }
+
+    /* Snow accumulation on title */
+    .snow-shelf {
+      position: absolute;
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      animation: snowBuild 4s ease 3s forwards;
+    }
+
+    @keyframes snowBuild {
+      0% {
+        opacity: 0;
+        transform: translateY(-3px);
+      }
+
+      100% {
+        opacity: 0.85;
+        transform: translateY(0);
+      }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: #4a6a80;
+      text-transform: uppercase;
+      animation: bob 2s ease-in-out infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes moonPulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.85;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(6px);
+      }
+    }
+
+    /* ═══ BRANCHES SECTION ═══ */
+    .moon-section {
+      position: relative;
+      z-index: 2;
+      height: 1100px;
+      overflow: visible;
+      margin-top: 5vh;
+
+    }
+
+    .moon-scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .moon-glow {
+      position: absolute;
+      width: min(55vw, 550px);
+      height: min(55vw, 550px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(210, 195, 160, 0.3) 0%, rgba(200, 180, 130, 0.15) 40%, rgba(180, 160, 110, 0.05) 60%, transparent 75%);
+      z-index: 1;
+      opacity: 0.9;
+    }
+
+    .moon-wrap {
+      position: absolute;
+      width: 40vh;
+      height: 40vh;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 8;
+      cursor: pointer;
+    }
+
+    .moon-wrap::after {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -30%;
+      width: 160%;
+      height: 160%;
+      border-radius: 50%;
+    }
+
+    .moon-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .cloud {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .cloud-bg-2 {
+      width: 100vw;
+      min-width: 100%;
+      min-height: 100%;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      object-fit: cover;
+      opacity: 0.1;
+      z-index: 3;
+      filter: brightness(0.5) saturate(0.4) sepia(0.3) hue-rotate(180deg);
+      mix-blend-mode: screen;
+    }
+
+    .cloud-left {
+      width: max(62vw, 760px);
+      top: 36%;
+      left: -6%;
+      opacity: 0.94;
+      z-index: 6;
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.15s;
+    }
+
+    .cloud-left.parted {
+      transform: translateX(-30vw);
+      opacity: 0.08;
+    }
+
+    .cloud-right {
+      width: max(58vw, 720px);
+      top: 28%;
+      right: 11%;
+      opacity: 0.92;
+      transform: scaleX(-1);
+      z-index: 6;
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.25s;
+    }
+
+    .cloud-right.parted {
+      transform: scaleX(-1) translateX(30vw);
+      opacity: 0.08;
+    }
+
+    .cloud-top {
+      width: max(70vw, 860px);
+      top: 41%;
+      right: -21%;
+      opacity: 0.9;
+      z-index: 7;
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.1s;
+    }
+
+    .cloud-top.parted {
+      transform: translateY(-18vh);
+      opacity: 0.08;
+    }
+
+    .cloud-bot {
+      bottom: 44%;
+      right: -10%;
+      opacity: 0.88;
+      z-index: 12;
+      transform: translateX(0);
+      transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease;
+      will-change: transform;
+
+      transition-delay: 0.2s;
+    }
+
+    .cloud-bot.parted {
+      transform: translateX(25vw);
+      opacity: 0.08;
+    }
+
+    .cloud-tl {
+      width: max(42vw, 520px);
+      left: -15%;
+      opacity: 0.86;
+      z-index: 7;
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.3s;
+    }
+
+    .cloud-tl.parted {
+      transform: translate(-22vw, -12vh);
+      opacity: 0.08;
+    }
+
+    .cloud-tr {
+      width: max(42vw, 520px);
+      top: 0%;
+      right: -5%;
+      opacity: 0.84;
+      transform: scaleX(-1);
+      z-index: 7;
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.35s;
+    }
+
+    .cloud-tr.parted {
+      transform: scaleX(-1) translate(-22vw, -12vh);
+      opacity: 0.08;
+    }
+
+    /* Fog at bottom */
+    .fog {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 20vh;
+      z-index: 15;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(26, 42, 58, 0.7) 0%, rgba(26, 42, 58, 0.3) 40%, transparent 100%);
+      animation: fogDrift 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes fogDrift {
+      0% {
+        transform: translateX(-2%);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: translateX(2%);
+        opacity: 1;
+      }
+    }
+
+    /* Project links */
+
+    .cloud-extra-1 {
+      width: max(50vw, 620px);
+      top: 18%;
+      left: 8%;
+      opacity: 0.82;
+      z-index: 5;
+      transform: scaleX(-1) scaleY(0.95);
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.18s;
+    }
+
+    .cloud-extra-1.parted {
+      transform: scaleX(-1) scaleY(0.95) translateX(28vw);
+      opacity: 0.08;
+    }
+
+    .cloud-extra-2 {
+      width: max(55vw, 680px);
+      bottom: 18%;
+      left: -12%;
+      opacity: 0.78;
+      z-index: 6;
+      transform: rotate(3deg);
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.28s;
+    }
+
+    .cloud-extra-2.parted {
+      transform: rotate(3deg) translate(-22vw, 12vh);
+      opacity: 0.08;
+    }
+
+    .cloud-extra-3 {
+      width: max(48vw, 580px);
+      top: 55%;
+      right: -8%;
+      opacity: 0.85;
+      z-index: 5;
+      transform: scaleX(-1) rotate(-2deg);
+
+      transition: transform 2.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease;
+      will-change: transform;
+
+      transition-delay: 0.22s;
+    }
+
+    .cloud-extra-3.parted {
+      transform: scaleX(-1) rotate(-2deg) translateX(28vw);
+      opacity: 0.08;
+    }
+
+
+    /* Center clouds that part on hover */
+    .cloud-center-left {
+      width: max(38vw, 460px);
+      top: 38%;
+      left: 20%;
+      opacity: 0.92;
+      z-index: 10;
+      transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease;
+      will-change: transform;
+
+      transition-delay: 0s;
+    }
+
+    .cloud-center-left.parted {
+      transform: translateX(-25vw);
+      opacity: 0.08;
+    }
+
+    .cloud-center-right {
+      width: max(38vw, 460px);
+      top: 35%;
+      right: 18%;
+      opacity: 0.92;
+      z-index: 10;
+      transform: scaleX(-1);
+      transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 2s ease;
+      will-change: transform;
+
+      transition-delay: 0.1s;
+    }
+
+    .cloud-center-right.parted {
+      transform: scaleX(-1) translateX(-25vw);
+      opacity: 0.08;
+    }
+
+    .cloud-center-top {
+      width: max(44vw, 540px);
+      top: 28%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.88;
+      z-index: 9;
+      transition: transform 2.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, opacity 2s ease 0.15s;
+      will-change: transform;
+
+      transition-delay: 0.2s;
+    }
+
+    .cloud-center-top.parted {
+      transform: translateX(-50%) translateY(-18vh);
+      opacity: 0.08;
+    }
+
+
+    .hand-arrow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(18vh, -2vh) rotate(-25deg);
+      z-index: 15;
+      pointer-events: none;
+      opacity: 0.4;
+      animation: arrowBob 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes arrowBob {
+      0% {
+        transform: translate(18vh, -2vh) rotate(-25deg);
+        opacity: 0.4;
+      }
+
+      100% {
+        transform: translate(17.5vh, -1.5vh) rotate(-23deg);
+        opacity: 0.5;
+      }
+    }
+
+
+
+
+
+
+    /* Newspaper cutout style */
+
+    .cutout-link-1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, 30%);
+    }
+
+    .cutout-word {
+      display: inline-block;
+      background: rgba(245, 240, 232, 0.92);
+      color: #1a1a1a;
+      font-family: 'Special Elite', 'Courier New', monospace;
+      font-style: normal;
+      font-weight: 400;
+      font-size: clamp(0.55rem, 1.2vw, 0.85rem);
+      letter-spacing: 0.05em;
+      padding: 0.15em 0.35em;
+      line-height: 1.2;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cutout-link:hover .cutout-word {
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+
+    .cutout-on-moon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.15rem;
+      opacity: 0;
+      transition: opacity 1.2s ease 0.5s;
+    }
+
+    .cutout-on-moon.visible {
+      opacity: 1;
+    }
+
+    .cutout-moon {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.15rem;
+      width: 100%;
+    }
+
+    .cutout-moon-word {
+      font-family: 'Special Elite', 'Courier New', monospace !important;
+      font-size: clamp(1.5rem, 4.2vw, 2.8rem) !important;
+      font-weight: 400 !important;
+      padding: 0.12em 0.35em !important;
+      background: rgba(240, 235, 225, 0.88) !important;
+    }
+
+
+
+
+
+    /* Branches section */
+    .branches-section {
+      position: relative;
+      z-index: 9;
+      min-height: 1000px;
+      padding-top: 10vh;
+      margin-bottom: 4vh;
+      overflow: hidden;
+    }
+
+    .branches-scene {
+      position: relative;
+      min-height: 560px;
+    }
+
+    .branch {
+      position: absolute;
+      left: -18vw;
+      width: clamp(480px, 68vw, 980px);
+      height: auto;
+      transform-origin: left center;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+      mix-blend-mode: multiply;
+      opacity: 0.97;
+      z-index: 5;
+      filter: brightness(0.78) contrast(1.38) saturate(0.75) drop-shadow(0 8px 18px rgba(4, 3, 2, 0.5));
+    }
+
+    .branch-1 {
+      top: 8%;
+      transform: rotate(-22deg);
+      width: clamp(520px, 74vw, 1060px);
+    }
+
+    .branch-3 {
+      top: -30%;
+      transform: rotate(10deg);
+      width: clamp(490px, 68vw, 980px);
+    }
+
+    /* Wind sway on hover */
+    @keyframes windSway1 {
+      0% {
+        transform: rotate(-22deg);
+      }
+
+      40% {
+        transform: rotate(-21.4deg);
+      }
+
+      70% {
+        transform: rotate(-22.3deg);
+      }
+
+      100% {
+        transform: rotate(-22deg);
+      }
+    }
+
+    @keyframes windSway3 {
+      0% {
+        transform: rotate(10deg);
+      }
+
+      35% {
+        transform: rotate(10.5deg);
+      }
+
+      65% {
+        transform: rotate(9.7deg);
+      }
+
+      100% {
+        transform: rotate(10deg);
+      }
+    }
+
+    .branches-section.sun-rise .branch-1 {
+      animation: windSway1 6s ease-in-out infinite;
+    }
+
+    .branches-section.sun-rise .branch-3 {
+      animation: windSway3 7s ease-in-out 0.5s infinite;
+    }
+
+    .branch-photo-link {
+      position: absolute;
+      top: 45%;
+      left: clamp(180px, 25vw, 360px);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.28rem;
+      text-decoration: none;
+      transform: rotate(-10deg);
+      z-index: 12;
+    }
+
+    .branch-photo-word {
+      display: inline-block;
+      background: rgba(242, 235, 222, 0.92);
+      color: #17130e;
+      font-family: 'Special Elite', 'Courier New', monospace;
+      font-size: clamp(1.5rem, 4.2vw, 2.8rem);
+      letter-spacing: 0.06em;
+      padding: 0.18em 0.42em;
+      box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.24);
+      transition: transform 0.32s ease, box-shadow 0.32s ease;
+    }
+
+    .branch-photo-link:hover .branch-photo-word,
+    .branch-photo-link:focus-visible .branch-photo-word {
+      transform: translateX(5px);
+      box-shadow: 3px 5px 11px rgba(0, 0, 0, 0.34);
+    }
+
+    .branches-sun {
+      position: absolute;
+      width: clamp(280px, 40vw, 520px);
+      height: auto;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 2;
+      pointer-events: none;
+      filter: drop-shadow(0 0 24px rgba(255, 196, 106, 0.6)) drop-shadow(0 0 70px rgba(255, 148, 56, 0.4));
+      transition: opacity 1.5s ease, visibility 0s linear 1.5s;
+    }
+
+    .branches-section.sun-rise .branches-sun {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 1.5s ease, visibility 0s linear 0s;
+    }
+
+    @media (max-width: 780px) {
+      .branches-section {
+        min-height: 460px;
+      }
+
+      .branches-scene {
+        min-height: 460px;
+      }
+
+      .branch {
+        left: -32vw;
+        width: clamp(300px, 88vw, 560px);
+      }
+
+      .branch-photo-link {
+        left: clamp(95px, 32vw, 190px);
+        top: 43%;
+      }
+    }
+
+    /* Zoom overlay */
+
+    .bottom-nav {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 3rem;
+      padding: 4rem 2rem 3rem;
+    }
+
+    .bottom-nav::before {
+      content: '';
+      position: absolute;
+      top: 2.2rem;
+      left: 15%;
+      width: 70%;
+      height: 1px;
+      background: rgba(180, 170, 150, 0.3);
+    }
+
+    .nav-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.4s ease;
+    }
+
+    .nav-card:hover {
+      transform: translateY(3px);
+    }
+
+    .nav-pin {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(180, 170, 150, 0.5);
+      margin-bottom: 4px;
+    }
+
+    .nav-string {
+      width: 1px;
+      height: 14px;
+      background: rgba(180, 170, 150, 0.3);
+      margin-bottom: 2px;
+    }
+
+    .nav-label {
+      background: rgba(240, 235, 225, 0.88);
+      padding: 0.4rem 0.8rem;
+      font-family: 'Special Elite', 'Courier New', monospace;
+      font-size: clamp(0.6rem, 1vw, 0.82rem);
+      color: #1a1a1a;
+      letter-spacing: 0.08em;
+      box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.15);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .nav-card:hover .nav-label {
+      box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .nav-card:nth-child(1) .nav-label {
+      transform: rotate(-2deg);
+    }
+
+    .nav-card:nth-child(2) .nav-label {
+      transform: rotate(1.5deg);
+    }
+
+    .nav-card:nth-child(3) .nav-label {
+      transform: rotate(-1deg);
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: #1a2a3a;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    #overlay.fade-in {
+      opacity: 1;
+      pointer-events: all;
+    }
+  </style>
 </head>
+
 <body>
-<div id="overlay"></div>
-<canvas id="stars"></canvas>
-<canvas id="grain"></canvas>
-<canvas id="snow"></canvas>
+  <div id="overlay"></div>
+  <canvas id="stars"></canvas>
+  <canvas id="grain"></canvas>
+  <canvas id="snow"></canvas>
 
-<!-- ═══ TITLE ═══ -->
-<section class="title-section" id="titleSection">
-  <h1 class="title-name">Feier Yu<br>Creative Portfolio</h1>
-  <p class="title-sub">Reimagining Asia Through Russia and China</p>
-  <span class="scroll-hint">scroll down ↓</span>
-</section>
+  <!-- ═══ TITLE ═══ -->
+  <section class="title-section" id="titleSection">
+    <h1 class="title-name">Feier Yu<br>Creative Portfolio</h1>
+    <p class="title-sub">Reimagining Asia Through Russia and China</p>
+    <span class="scroll-hint">scroll down ↓</span>
+  </section>
 
-<!-- ═══ MOON & CLOUDS ═══ -->
-<section class="moon-section" id="moonSection">
-  <div class="moon-scene">
-    <div class="moon-glow"></div>
+  <!-- ═══ MOON & CLOUDS ═══ -->
+  <section class="moon-section" id="moonSection">
+    <div class="moon-scene">
+      <div class="moon-glow"></div>
 
-    <img class="cloud cloud-bg-2" src="image/cloud-1.png" alt="">
+      <img class="cloud cloud-bg-2" src="image/cloud-1.png" alt="">
 
-    <div class="moon-wrap">
-      <img src="image/cloud-2.png" alt="Moon">
-      <!-- Project One cutout on moon -->
-      <div class="cutout-on-moon" id="moonCutout">
-        <a href="project-1.html" onclick="zoomTo(event, this)" class="cutout-link cutout-moon">
-          <span class="cutout-word cutout-moon-word" style="transform: rotate(4deg);">Creative/Critical</span>
-          <span class="cutout-word cutout-moon-word" style="transform: rotate(-2.5deg); margin-top: 0.2rem;">Piece</span>
-        </a>
+      <div class="moon-wrap">
+        <img src="image/cloud-2.png" alt="Moon">
+        <!-- Project One cutout on moon -->
+        <div class="cutout-on-moon" id="moonCutout">
+          <a href="project-1.html" onclick="zoomTo(event, this)" class="cutout-link cutout-moon">
+            <span class="cutout-word cutout-moon-word" style="transform: rotate(4deg);">Creative/Critical</span>
+            <span class="cutout-word cutout-moon-word"
+              style="transform: rotate(-2.5deg); margin-top: 0.2rem;">Piece</span>
+          </a>
+        </div>
       </div>
+
+      <img class="cloud cloud-tl" src="image/cloud-3.png" alt="">
+      <img class="cloud cloud-tr" src="image/cloud-4.png" alt="">
+      <img class="cloud cloud-left" src="image/cloud-5.png" alt="">
+      <img class="cloud cloud-right" src="image/cloud-6.png" alt="">
+      <img class="cloud cloud-top" src="image/cloud-7.png" alt="">
+      <img class="cloud cloud-bot" src="image/cloud-8.png" alt="">
+
+      <!-- Center parting clouds -->
+      <img class="cloud cloud-center-left" id="partLeft" src="image/cloud-9.png" alt="">
+      <img class="cloud cloud-center-right" id="partRight" src="image/cloud-10.png" alt="">
+      <img class="cloud cloud-center-top" id="partTop" src="image/cloud-11.png" alt="">
+
+      <!-- Extra foreground clouds -->
+      <img class="cloud cloud-extra-1" src="image/cloud-12.png" alt="">
+      <img class="cloud cloud-extra-2" src="image/cloud-13.png" alt="">
+      <img class="cloud cloud-extra-3" src="image/cloud-14.png" alt="">
+
+      <div class="fog"></div>
+    </div>
+  </section>
+  <!-- ═══ BRANCHES ═══ -->
+  <section class="branches-section" id="branchesSection">
+    <div class="branches-scene">
+      <img class="branch branch-1" src="image/branch-1.png" alt="">
+      <img class="branch branch-3" src="image/branch-3.png" alt="">
+
+      <a href="project-2.html" onclick="zoomTo(event, this)" class="branch-photo-link" id="branchPhotoTrigger">
+        <span class="branch-photo-word" style="transform: rotate(2deg);">Photo</span>
+        <span class="branch-photo-word" style="transform: rotate(-2deg); margin-left: 0.4rem;">Essay</span>
+      </a>
+
+      <img class="branches-sun" id="branchesSun" src="image/sun.png" alt="" aria-hidden="true">
     </div>
 
-    <img class="cloud cloud-tl" src="image/cloud-3.png" alt="">
-    <img class="cloud cloud-tr" src="image/cloud-4.png" alt="">
-    <img class="cloud cloud-left" src="image/cloud-5.png" alt="">
-    <img class="cloud cloud-right" src="image/cloud-6.png" alt="">
-    <img class="cloud cloud-top" src="image/cloud-7.png" alt="">
-    <img class="cloud cloud-bot" src="image/cloud-8.png" alt="">
+  </section>
 
-    <!-- Center parting clouds -->
-    <img class="cloud cloud-center-left" id="partLeft" src="image/cloud-9.png" alt="">
-    <img class="cloud cloud-center-right" id="partRight" src="image/cloud-10.png" alt="">
-    <img class="cloud cloud-center-top" id="partTop" src="image/cloud-11.png" alt="">
-
-    <!-- Extra foreground clouds -->
-    <img class="cloud cloud-extra-1" src="image/cloud-12.png" alt="">
-    <img class="cloud cloud-extra-2" src="image/cloud-13.png" alt="">
-    <img class="cloud cloud-extra-3" src="image/cloud-14.png" alt="">
-
-    <div class="fog"></div>
-  </div>
-</section>
-<!-- ═══ BRANCHES ═══ -->
-<section class="branches-section" id="branchesSection">
-  <div class="branches-scene">
-    <img class="branch branch-1" src="image/branch-1.png" alt="">
-    <img class="branch branch-3" src="image/branch-3.png" alt="">
-
-    <a href="project-2.html" onclick="zoomTo(event, this)" class="branch-photo-link" id="branchPhotoTrigger">
-      <span class="branch-photo-word" style="transform: rotate(2deg);">Photo</span>
-      <span class="branch-photo-word" style="transform: rotate(-2deg); margin-left: 0.4rem;">Essay</span>
+  <div class="bottom-nav">
+    <a href="project-1.html" onclick="zoomTo(event, this)" class="nav-card">
+      <div class="nav-pin"></div>
+      <div class="nav-string"></div>
+      <span class="nav-label">Creative/Critical Piece</span>
     </a>
-
-    <img class="branches-sun" id="branchesSun" src="image/sun.png" alt="" aria-hidden="true">
-  </div>
-
-</section>
-
-<div class="bottom-nav">
-  <a href="project-1.html" onclick="zoomTo(event, this)" class="nav-card">
-    <div class="nav-pin"></div>
-    <div class="nav-string"></div>
-    <span class="nav-label">Creative/Critical Piece</span>
-  </a>
-  <a href="project-2.html" onclick="zoomTo(event, this)" class="nav-card">
-    <div class="nav-pin"></div>
-    <div class="nav-string"></div>
-    <span class="nav-label">Photo Essay</span>
-  </a>
-  <!-- <a href="project3.html" onclick="zoomTo(event, this)" class="nav-card">
+    <a href="project-2.html" onclick="zoomTo(event, this)" class="nav-card">
+      <div class="nav-pin"></div>
+      <div class="nav-string"></div>
+      <span class="nav-label">Photo Essay</span>
+    </a>
+    <!-- <a href="project3.html" onclick="zoomTo(event, this)" class="nav-card">
     <div class="nav-pin"></div>
     <div class="nav-string"></div>
     <span class="nav-label">Project Three</span>
   </a> -->
-</div>
+  </div>
 
-<script>
+  <script>
 
-// Always scroll to top on load/refresh
-window.addEventListener('load', function() {
-  if (window.location.hash) {
-    var target = document.querySelector(window.location.hash);
-    if (target) {
-      target.scrollIntoView();
-      return;
-    }
-  }
-  window.scrollTo(0, 0);
-});
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual';
-}
-
-// Zoom transition
-function zoomTo(e, el) {
-  e.preventDefault();
-  var overlay = document.getElementById('overlay');
-  var rect = el.getBoundingClientRect();
-  var ox = ((rect.left + rect.width * 0.5) / window.innerWidth * 100).toFixed(2) + '%';
-  var oy = ((rect.top + rect.height * 0.5) / window.innerHeight * 100).toFixed(2) + '%';
-  document.body.style.overflow = 'hidden';
-  document.body.style.transformOrigin = ox + ' ' + oy;
-  document.body.style.transition = 'transform 1.5s cubic-bezier(0.4,0,0.2,1), opacity 1.2s ease';
-  document.body.style.transform = 'scale(8)';
-  document.body.style.opacity = '0';
-  setTimeout(function(){ overlay.classList.add('fade-in'); }, 900);
-  setTimeout(function(){ window.location.href = el.getAttribute('href'); }, 1500);
-}
-
-// Moon hover — part clouds
-(function() {
-  var moonWrap = document.querySelector('.moon-wrap');
-  var partLeft = document.getElementById('partLeft');
-  var partRight = document.getElementById('partRight');
-  var partTop = document.getElementById('partTop');
-  var cloudBot = document.querySelector('.cloud-bot');
-  
-  if (moonWrap) {
-    var allClouds = document.querySelectorAll('.cloud');
-    var autoRevealed = false;
-    var parted = false;
-    var hoverCount = 0;
-    var revealTimer = null;
-    var hoverTimer = null;
-
-    function partClouds() {
-      parted = true;
-      allClouds.forEach(function(c) { c.classList.add('parted'); });
-      var mc = document.getElementById('moonCutout');
-      if (mc) mc.classList.add('visible');
-    }
-
-    function unpartClouds() {
-      parted = false;
-      allClouds.forEach(function(c) { c.classList.remove('parted'); });
-      var mc = document.getElementById('moonCutout');
-      if (mc) mc.classList.remove('visible');
-    }
-
-    moonWrap.addEventListener('mouseenter', function() {
-      partClouds();
-      hoverTimer = setTimeout(function() {
-        hoverCount++;
-        // If clouds have parted before (hoverCount >= 1 after 0.3s), kill auto-part forever
-        if (hoverCount >= 1 && revealTimer) {
-          clearTimeout(revealTimer);
-          revealTimer = null;
+    // Always scroll to top on load/refresh
+    window.addEventListener('load', function () {
+      if (window.location.hash) {
+        var target = document.querySelector(window.location.hash);
+        if (target) {
+          target.scrollIntoView();
+          return;
         }
-      }, 1000);
-    });
-
-    moonWrap.addEventListener('mouseleave', function() {
-      if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
-      if (!autoRevealed) {
-        unpartClouds();
       }
+      window.scrollTo(0, 0);
     });
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
 
-    // Auto-reveal after 7.5 seconds — only if user hasn't meaningfully hovered
-    var branchObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting && hoverCount === 0) {
-          revealTimer = setTimeout(function() {
-            if (hoverCount === 0) {
-              autoRevealed = true;
-              partClouds();
+    // Zoom transition
+    function zoomTo(e, el) {
+      e.preventDefault();
+      var overlay = document.getElementById('overlay');
+      var rect = el.getBoundingClientRect();
+      var ox = ((rect.left + rect.width * 0.5) / window.innerWidth * 100).toFixed(2) + '%';
+      var oy = ((rect.top + rect.height * 0.5) / window.innerHeight * 100).toFixed(2) + '%';
+      document.body.style.overflow = 'hidden';
+      document.body.style.transformOrigin = ox + ' ' + oy;
+      document.body.style.transition = 'transform 1.5s cubic-bezier(0.4,0,0.2,1), opacity 1.2s ease';
+      document.body.style.transform = 'scale(8)';
+      document.body.style.opacity = '0';
+      setTimeout(function () { overlay.classList.add('fade-in'); }, 900);
+      setTimeout(function () { window.location.href = el.getAttribute('href'); }, 1500);
+    }
+
+    // Moon hover — part clouds
+    (function () {
+      var moonWrap = document.querySelector('.moon-wrap');
+      var partLeft = document.getElementById('partLeft');
+      var partRight = document.getElementById('partRight');
+      var partTop = document.getElementById('partTop');
+      var cloudBot = document.querySelector('.cloud-bot');
+
+      if (moonWrap) {
+        var allClouds = document.querySelectorAll('.cloud');
+        var autoRevealed = false;
+        var parted = false;
+        var hoverCount = 0;
+        var revealTimer = null;
+        var hoverTimer = null;
+
+        function partClouds() {
+          parted = true;
+          allClouds.forEach(function (c) { c.classList.add('parted'); });
+          var mc = document.getElementById('moonCutout');
+          if (mc) mc.classList.add('visible');
+        }
+
+        function unpartClouds() {
+          parted = false;
+          allClouds.forEach(function (c) { c.classList.remove('parted'); });
+          var mc = document.getElementById('moonCutout');
+          if (mc) mc.classList.remove('visible');
+        }
+
+        moonWrap.addEventListener('mouseenter', function () {
+          partClouds();
+          hoverTimer = setTimeout(function () {
+            hoverCount++;
+            // If clouds have parted before (hoverCount >= 1 after 0.3s), kill auto-part forever
+            if (hoverCount >= 1 && revealTimer) {
+              clearTimeout(revealTimer);
+              revealTimer = null;
             }
-          }, 4500);
-        } else if (!entry.isIntersecting) {
-          if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
-          if (autoRevealed) {
-            autoRevealed = false;
+          }, 1000);
+        });
+
+        moonWrap.addEventListener('mouseleave', function () {
+          if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+          if (!autoRevealed) {
             unpartClouds();
           }
+        });
+
+        // Auto-reveal after 7.5 seconds — only if user hasn't meaningfully hovered
+        var branchObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting && hoverCount === 0) {
+              revealTimer = setTimeout(function () {
+                if (hoverCount === 0) {
+                  autoRevealed = true;
+                  partClouds();
+                }
+              }, 4500);
+            } else if (!entry.isIntersecting) {
+              if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
+              if (autoRevealed) {
+                autoRevealed = false;
+                unpartClouds();
+              }
+            }
+          });
+        }, { threshold: 0.3 });
+        branchObserver.observe(document.getElementById('moonSection'));
+      }
+    })();
+
+    // Branches hover — position sun behind words, fade in/out
+    (function () {
+      var trigger = document.getElementById('branchPhotoTrigger');
+      var section = document.getElementById('branchesSection');
+      var sun = document.getElementById('branchesSun');
+      var scene = section ? section.querySelector('.branches-scene') : null;
+
+      if (!trigger || !section || !sun || !scene) return;
+
+      function positionSun() {
+        var trigRect = trigger.getBoundingClientRect();
+        var sceneRect = scene.getBoundingClientRect();
+        var cx = trigRect.left + trigRect.width / 2 - sceneRect.left;
+        var cy = trigRect.top + trigRect.height / 2 - sceneRect.top;
+        sun.style.left = cx - sun.offsetWidth / 2 + 'px';
+        sun.style.top = cy - sun.offsetHeight / 2 + 'px';
+      }
+
+      function riseSun() {
+        positionSun();
+        section.classList.add('sun-rise');
+      }
+
+      function hideSun() {
+        section.classList.remove('sun-rise');
+      }
+
+      trigger.addEventListener('mouseenter', riseSun);
+      trigger.addEventListener('mouseleave', hideSun);
+      trigger.addEventListener('focus', riseSun);
+      trigger.addEventListener('blur', hideSun);
+      window.addEventListener('resize', positionSun);
+    })();
+
+    // Parallax
+    window.addEventListener('scroll', function () {
+      var scrollY = window.scrollY;
+      var vh = window.innerHeight;
+      var title = document.getElementById('titleSection');
+      var progress = Math.min(scrollY / vh, 1);
+      title.style.opacity = 1 - progress * 1.2;
+      title.style.transform = 'scale(' + (1 - progress * 0.15) + ') translateY(' + (scrollY * 0.4) + 'px)';
+    });
+
+    // Stars
+    (function () {
+      var c = document.getElementById('stars');
+      c.width = window.innerWidth; c.height = window.innerHeight;
+      var ctx = c.getContext('2d');
+      var stars = [];
+      for (var i = 0; i < 80; i++) {
+        stars.push({
+          x: Math.random() * c.width, y: Math.random() * c.height,
+          r: Math.random() * 1.2 + 0.3,
+          baseOpacity: Math.random() * 0.5 + 0.2,
+          twinkleSpeed: Math.random() * 0.02 + 0.005,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+      var frame = 0;
+      function drawStars() {
+        ctx.clearRect(0, 0, c.width, c.height);
+        frame++;
+        for (var i = 0; i < stars.length; i++) {
+          var s = stars[i];
+          var twinkle = s.baseOpacity + Math.sin(frame * s.twinkleSpeed + s.phase) * 0.2;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(220,235,255,' + Math.max(0, Math.min(1, twinkle)) + ')';
+          ctx.fill();
         }
-      });
-    }, { threshold: 0.3 });
-    branchObserver.observe(document.getElementById('moonSection'));
-  }
-})();
+        requestAnimationFrame(drawStars);
+      }
+      drawStars();
+      window.addEventListener('resize', function () { c.width = window.innerWidth; c.height = window.innerHeight; });
+    })();
 
-// Branches hover label - wake the sun
-(function() {
-  var trigger = document.getElementById('branchPhotoTrigger');
-  var section = document.getElementById('branchesSection');
+    // Grain
+    (function () {
+      var c = document.getElementById('grain');
+      function render() {
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        var ctx = c.getContext('2d');
+        var img = ctx.createImageData(c.width, c.height);
+        var d = img.data;
+        for (var i = 0; i < d.length; i += 4) {
+          var v = Math.random() * 255;
+          d[i] = v; d[i + 1] = v; d[i + 2] = v; d[i + 3] = 255;
+        }
+        ctx.putImageData(img, 0, 0);
+      }
+      render();
+      window.addEventListener('resize', render);
+    })();
 
-  if (!trigger || !section) return;
-
-  function riseSun() {
-    section.classList.add('sun-rise');
-  }
-
-  function hideSun() {
-    section.classList.remove('sun-rise');
-  }
-
-  trigger.addEventListener('mouseenter', riseSun);
-  trigger.addEventListener('mouseleave', hideSun);
-  trigger.addEventListener('focus', riseSun);
-  trigger.addEventListener('blur', hideSun);
-})();
-
-// Parallax
-window.addEventListener('scroll', function() {
-  var scrollY = window.scrollY;
-  var vh = window.innerHeight;
-  var title = document.getElementById('titleSection');
-  var progress = Math.min(scrollY / vh, 1);
-  title.style.opacity = 1 - progress * 1.2;
-  title.style.transform = 'scale(' + (1 - progress * 0.15) + ') translateY(' + (scrollY * 0.4) + 'px)';
-});
-
-// Stars
-(function() {
-  var c = document.getElementById('stars');
-  c.width = window.innerWidth; c.height = window.innerHeight;
-  var ctx = c.getContext('2d');
-  var stars = [];
-  for (var i = 0; i < 80; i++) {
-    stars.push({
-      x: Math.random() * c.width, y: Math.random() * c.height,
-      r: Math.random() * 1.2 + 0.3,
-      baseOpacity: Math.random() * 0.5 + 0.2,
-      twinkleSpeed: Math.random() * 0.02 + 0.005,
-      phase: Math.random() * Math.PI * 2
-    });
-  }
-  var frame = 0;
-  function drawStars() {
-    ctx.clearRect(0, 0, c.width, c.height);
-    frame++;
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-      var twinkle = s.baseOpacity + Math.sin(frame * s.twinkleSpeed + s.phase) * 0.2;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(220,235,255,' + Math.max(0, Math.min(1, twinkle)) + ')';
-      ctx.fill();
-    }
-    requestAnimationFrame(drawStars);
-  }
-  drawStars();
-  window.addEventListener('resize', function() { c.width = window.innerWidth; c.height = window.innerHeight; });
-})();
-
-// Grain
-(function() {
-  var c = document.getElementById('grain');
-  function render() {
-    c.width = window.innerWidth; c.height = window.innerHeight;
-    var ctx = c.getContext('2d');
-    var img = ctx.createImageData(c.width, c.height);
-    var d = img.data;
-    for (var i = 0; i < d.length; i += 4) {
-      var v = Math.random() * 255;
-      d[i] = v; d[i+1] = v; d[i+2] = v; d[i+3] = 255;
-    }
-    ctx.putImageData(img, 0, 0);
-  }
-  render();
-  window.addEventListener('resize', render);
-})();
-
-// Snow
-(function() {
-  var c = document.getElementById('snow');
-  c.width = window.innerWidth; c.height = window.innerHeight;
-  var ctx = c.getContext('2d');
-  var flakes = [];
-  for (var i = 0; i < 120; i++) {
-    flakes.push({
-      x: Math.random() * c.width, y: Math.random() * c.height,
-      r: Math.random() * 2.5 + 0.8,
-      speed: Math.random() * 0.6 + 0.15,
-      drift: Math.random() * 0.3 - 0.15,
-      opacity: Math.random() * 0.5 + 0.3
-    });
-  }
-  function draw() {
-    ctx.clearRect(0, 0, c.width, c.height);
-    for (var i = 0; i < flakes.length; i++) {
-      var f = flakes[i];
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,' + f.opacity + ')';
-      ctx.fill();
-      f.y += f.speed; f.x += f.drift;
-      if (f.y > c.height) { f.y = -5; f.x = Math.random() * c.width; }
-      if (f.x > c.width) f.x = 0;
-      if (f.x < 0) f.x = c.width;
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
-  window.addEventListener('resize', function() { c.width = window.innerWidth; c.height = window.innerHeight; });
-})();
-</script>
+    // Snow
+    (function () {
+      var c = document.getElementById('snow');
+      c.width = window.innerWidth; c.height = window.innerHeight;
+      var ctx = c.getContext('2d');
+      var flakes = [];
+      for (var i = 0; i < 120; i++) {
+        flakes.push({
+          x: Math.random() * c.width, y: Math.random() * c.height,
+          r: Math.random() * 2.5 + 0.8,
+          speed: Math.random() * 0.6 + 0.15,
+          drift: Math.random() * 0.3 - 0.15,
+          opacity: Math.random() * 0.5 + 0.3
+        });
+      }
+      function draw() {
+        ctx.clearRect(0, 0, c.width, c.height);
+        for (var i = 0; i < flakes.length; i++) {
+          var f = flakes[i];
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,' + f.opacity + ')';
+          ctx.fill();
+          f.y += f.speed; f.x += f.drift;
+          if (f.y > c.height) { f.y = -5; f.x = Math.random() * c.width; }
+          if (f.x > c.width) f.x = 0;
+          if (f.x < 0) f.x = c.width;
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+      window.addEventListener('resize', function () { c.width = window.innerWidth; c.height = window.innerHeight; });
+    })();
+  </script>
 </body>
+
 </html>

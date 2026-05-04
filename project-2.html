@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Branch & Sun Page</title>
+  <title>Feier Yu — Photo Essay</title>
+  <link rel="icon" type="image/x-icon" href="image/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Special+Elite&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -389,6 +390,98 @@
       line-height: 1.7;
     }
 
+    /* ── Foreword ── */
+    .foreword {
+      max-width: 38em;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .foreword-title {
+      color: #f0d9c4;
+      font-size: clamp(1.2rem, 2vw, 1.7rem);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+    .foreword p {
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      color: #c8b8aa;
+      line-height: 1.9;
+      font-style: italic;
+    }
+
+    /* ── Photo frame with caption ── */
+    .photo-frame {
+      position: relative;
+      max-width: 48em;
+      margin: 1.8rem auto 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    }
+    .photo-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .caption-btn {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 220, 190, 0.4);
+      background: rgba(12, 28, 54, 0.65);
+      color: #f0d9c4;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      display: grid;
+      place-items: center;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 5;
+    }
+    .caption-btn:hover {
+      background: rgba(16, 36, 68, 0.88);
+      transform: scale(1.1);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+    .caption-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 3rem 1.5rem 1.2rem;
+      background: linear-gradient(to top, rgba(8, 16, 32, 0.92) 0%, rgba(8, 16, 32, 0.7) 60%, transparent 100%);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .caption-overlay.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .caption-overlay p {
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: clamp(0.65rem, 1.1vw, 0.82rem);
+      color: #c8beb4;
+      line-height: 1.7;
+      letter-spacing: 0.03em;
+      text-indent: 0;
+      text-align: left;
+    }
+
+    .photo-frame + .photo-frame {
+      margin-top: 2rem;
+    }
+
     /* ── Snow & scroll hint ── */
     #snow-canvas {
       position: fixed;
@@ -463,8 +556,8 @@
       </div> -->
 
       <div class="banner-title">
-        <h1>Title Placeholder</h1>
-        <p>Subtitle · Theme · Year</p>
+        <h1>The Line Between Civilized and Wild</h1>
+        <p>Photo Essay</p>
       </div>
     </section>
 
@@ -472,39 +565,211 @@
     <div class="content-outer">
 
       <section class="content" aria-label="Main content">
-        <div class="poem">
-          <p>Placeholder line one of the poem</p>
-          <p>a second line follows here</p>
-          <p>then a third, quieter now</p>
-          <p>and a final line that breathes.</p>
+        <div class="foreword">
+          <h2 class="foreword-title">Foreword</h2>
+          <p>In this photo essay, I wanted to explore how the line between civilized and wild was drawn and how it has been complicated throughout time. This essay is my understanding of the evolution of the line.</p>
         </div>
-        <div class="poem-attribution">—Author / Source</div>
 
         <div class="section-spacer"></div>
 
-        <h2 class="essay-title">Essay Title Goes Here</h2>
-        <p class="essay-subtitle">Subtitle or Theme of the Piece</p>
+        <h2 class="essay-title">I. Establishment</h2>
+        <p class="essay-subtitle">The line is clearly drawn through the development of technology and language.</p>
 
-        <div class="essay-body">
-          <p>This is the opening paragraph of the essay. It introduces the central theme, establishes the context, and draws the reader into the argument. Replace this text with your actual content when ready.</p>
-          <p>The second paragraph develops the main idea further. It might introduce a key quotation, reference a work, or present a contrasting perspective. All placeholder sentences are written to approximate the length and rhythm of real prose.</p>
-          <p>A third paragraph continues the analysis. It engages with the source material in depth, weaving observation and interpretation together. The tone remains measured and reflective throughout.</p>
-          <p>The fourth paragraph shifts slightly — perhaps toward a broader cultural or historical lens. It situates the argument within a larger framework and anticipates potential objections.</p>
-          <p>The concluding paragraph draws the threads together. It does not simply repeat what came before but arrives at a new vantage point, leaving the reader with something to carry forward.</p>
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-1.png" alt="Digital collage contrasting urban architecture with natural landscape" />
+          <button class="caption-btn" id="captionBtn1" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay1">
+            <p>The harsh lines of architecture contrast with the soft lines from nature. Digital Collage by Feier Yu; Sourced Photos from Pinterest.</p>
+          </div>
         </div>
 
-        <div class="essay-author">
-          <p>Author Name</p>
-          <p>Date / Context</p>
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-2.png" alt="Ancient Chinese pictographs depicting civilization and nature" />
+          <button class="caption-btn" id="captionBtn2" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay2">
+            <p>Characters delineate civilized from wild. The characters are the lines themselves. Digital Collage by Feier Yu; Sourced Photos from Wikipedia.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-3.png" alt="Tractors plowing farmland in HeiLongJiang, China" />
+          <button class="caption-btn" id="captionBtn3" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay3">
+            <p>Technology shapes the line. Visual China. HeiLongJiang, ShuangYa Mountain. 2023. Caixin, science.caixin.com/m/2023-07-25/102082390.html. Accessed 3 May 2026.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="content" aria-label="Section 2">
+        <div class="section-spacer"></div>
+
+        <h2 class="essay-title">II. Collapse</h2>
+        <p class="essay-subtitle">The line fails?</p>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-4.png" alt="View through stone archway in Maastricht, Netherlands" />
+          <button class="caption-btn" id="captionBtn4" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay4">
+            <p>The wild grows on what was previously civilized. A new definition of civilized and wild is forming. Photo Shot by Feier Yu; Maastricht, Limburg, Netherlands.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-5.png" alt="Leaning on Door Admiring Bamboo, YongZheng Twelve Beauties painting" />
+          <button class="caption-btn" id="captionBtn5" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay5">
+            <p>Both wild and civilized are confined by the line. With a contemporary perspective, it is difficult to interpret which is civilized and which is wild. Leaning on Door Admiring Bamboo [倚门观竹]. c. 1723–1735. YongZheng Painting of Twelve Beauties [雍正十二美人图], Palace Museum, Beijing.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-6.png" alt="Ancient tree towering over the Forbidden City, Beijing" />
+          <button class="caption-btn" id="captionBtn6" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay6">
+            <p>The wild persists beyond the line drawn by the civilized. Photo Shot by Feier Yu; Forbidden City, Beijing, China.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-7.png" alt="Side by side winter scenes from Colorado Springs and Shenyang" />
+          <button class="caption-btn" id="captionBtn7" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay" id="captionOverlay7">
+            <p>The line is deeply personal and follows everyone wherever they go. Photos Shot by Feier Yu; Left: Colorado Springs, Colorado, USA. Right: Shenyang, Liaoning, China.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="content" aria-label="Section 3">
+        <div class="section-spacer"></div>
+
+        <h2 class="essay-title">III. Reformation</h2>
+        <p class="essay-subtitle">The line shifts. Is it blurred or is it clearer?</p>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-8.png" alt="Digital collage of mythology, industry, and nature" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>Mythology, Industrialization, and the line. Digital Collage by Feier Yu; Sourced Photos from Pinterest.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-9.png" alt="Exterminate Four Pests propaganda poster, China, 1958" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>The line forms a target. What are the dangers of this line? "Exterminate Four Pests" Poster, China, 1958.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-10.png" alt="Farming scene with Great Wall in background, North Korea border" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>What is civilized in this photo? Sagolj, Damir. North of the Town of Sinuiju, North Korea. 2 Apr. 2017. The Atlantic, www.theatlantic.com/photo/2017/04/along-the-north-korean-border/523404/. Accessed 3 May 2026.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-11.png" alt="Lily pond at NongChan Buddhist Monastery, Taipei" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>Where does religion fit in this separation? Photo Shot by Feier Yu; NongChan Buddhist Monastery, Taipei, Taiwan.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-12.png" alt="Tibetan steppe landscape with mountains and wildflowers" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>The line is expanding. These concepts infiltrate the steppe. Photo Shot by Feier Yu; Litang, Garzê Tibetan Autonomous Prefecture, Sichuan, China.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="content" aria-label="Section 4">
+        <div class="section-spacer"></div>
+
+        <h2 class="essay-title">IV. Understanding</h2>
+        <p class="essay-subtitle">The line is acknowledged, but what is there to do?</p>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-13.png" alt="Highway road sign against open Colorado prairie and sky" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>The concepts are merging. Photo Shot by Feier Yu; Colorado Springs, Colorado, USA.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-14.png" alt="QiPan Mountain scenic area news article, Shenyang" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>The line is exploited. QiPan Mountain. Shenyang, Liaoning, China. Shenyang Daily [沈阳日报], www.shenyang.gov.cn/zt/zysthbdczln/dcdt/202112/t20211201_1709794.html. Accessed 3 May 2026.</p>
+          </div>
+        </div>
+
+        <div class="photo-frame">
+          <img class="photo-img" src="image/photo-essay/essay-15.png" alt="Paper collage of flora with manga cutouts and reflective paper" />
+          <button class="caption-btn" aria-label="Show image caption">
+            <span class="caption-icon">i</span>
+          </button>
+          <div class="caption-overlay">
+            <p>Is there a separation now? Paper Collage by Feier Yu; cutouts from manga and reflective paper.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="content" aria-label="Afterword">
+        <div class="section-spacer"></div>
+
+        <div class="foreword">
+          <h2 class="foreword-title">Afterword</h2>
+          <p>Through my interpretation of the evolution of the line, I have realized that the line's barriers have shifted completely across time. However, regardless of a clear or obscured line, the line still exists within us and there appears to be no clear solution to dissolve it. This led me to question if there is a necessity to dissolve it. Do we still view the "wild" and "civilized" as holding distinct values, or are both equal in our eyes? The line has been altered to a point where everything is simultaneously wild and civilized. What do we do now, when there is no distinction?</p>
         </div>
       </section>
 
+      <!-- Placeholder for additional sections -->
       <section class="content works-cited-section" aria-label="Works Cited">
+        <div class="section-spacer"></div>
         <div class="works-cited">
           <h3>Works Cited</h3>
-          <p>Author, First. <em>Title of Work</em>. Publisher, Year.</p>
-          <p>Author, Second. <em>Another Title</em>. Publisher, Year.</p>
-          <p>Director, Name, director. <em>Film Title</em>. Year.</p>
+          <p>Collage Photos Sourced from Pinterest.</p>
+          <p><em>Leaning on Door Admiring Bamboo</em> [倚门观竹]. c. 1723–1735. YongZheng Painting of Twelve Beauties [雍正十二美人图], Palace Museum, Beijing.</p>
+          <p>QiPan Mountain. Shenyang, Liaoning, China. <em>Shenyang Daily</em> [沈阳日报], www.shenyang.gov.cn/zt/zysthbdczln/dcdt/202112/t20211201_1709794.html. Accessed 3 May 2026.</p>
+          <p>Sagolj, Damir. <em>North of the Town of Sinuiju, North Korea</em>. 2 Apr. 2017. <em>The Atlantic</em>, www.theatlantic.com/photo/2017/04/along-the-north-korean-border/523404/. Accessed 3 May 2026.</p>
+          <p>Visual China. <em>HeiLongJiang, ShuangYa Mountain</em>. 2023. <em>Caixin</em>, science.caixin.com/m/2023-07-25/102082390.html. Accessed 3 May 2026.</p>
         </div>
       </section>
     </div>
@@ -560,6 +825,32 @@
   <!-- Banner fade-in -->
   <script>
     document.getElementById('pageBanner').classList.add('loaded');
+  </script>
+
+  <!-- Caption toggle -->
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll('.caption-btn');
+      buttons.forEach(function(btn) {
+        var overlay = btn.nextElementSibling;
+        if (!overlay) return;
+
+        var showing = false;
+
+        btn.addEventListener('click', function () {
+          showing = !showing;
+          overlay.classList.toggle('visible', showing);
+        });
+
+        btn.addEventListener('mouseenter', function () {
+          if (!showing) overlay.classList.add('visible');
+        });
+
+        btn.addEventListener('mouseleave', function () {
+          if (!showing) overlay.classList.remove('visible');
+        });
+      });
+    })();
   </script>
 
   <!-- Scroll hint -->
