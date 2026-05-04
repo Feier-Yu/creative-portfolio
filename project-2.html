@@ -410,6 +410,29 @@
       font-style: italic;
     }
 
+    .caption-notice {
+      text-align: center;
+      font-family: "Special Elite", "Courier New", monospace;
+      font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .caption-notice-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 220, 190, 0.4);
+      background: rgba(12, 28, 54, 0.65);
+      color: #f0d9c4;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 0.7rem;
+      font-style: italic;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+
     /* ── Photo frame with caption ── */
     .photo-frame {
       position: relative;
@@ -569,6 +592,10 @@
           <h2 class="foreword-title">Foreword</h2>
           <p>In this photo essay, I wanted to explore how the line between civilized and wild was drawn and how it has been complicated throughout time. This essay is my understanding of the evolution of the line.</p>
         </div>
+
+        <div class="section-spacer"></div>
+
+        <p class="caption-notice">Press the <span class="caption-notice-icon">i</span> on each image for captions.</p>
 
         <div class="section-spacer"></div>
 
