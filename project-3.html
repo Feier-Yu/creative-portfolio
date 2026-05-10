@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Written Without, Written Within</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #6a8ab0;
+      color: #e8e0d6;
+      font-family: "EB Garamond", serif;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+    #snow-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .back-home {
+      position: fixed; top: 1.2rem; left: 1.5rem; z-index: 100;
+      color: rgba(20, 20, 40, 0.35); text-decoration: none;
+      font-size: 0.8rem; letter-spacing: 0.1em; transition: color 0.4s;
+    }
+    .back-home:hover { color: rgba(20, 20, 40, 0.7); }
+
+    /* ═══ OVERVIEW PAGE ═══ */
+    .overview-page { min-height: 100vh; padding-bottom: 6rem; position: relative; z-index: 2; }
+    .overview-hero {
+      position: relative; height: 80vh; min-height: 500px;
+      overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 3rem;
+    }
+    .overview-hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(to top, #6a8ab0 0%, #8aa0be 30%, #a0b4cc 60%, #b8c8da 100%);
+    }
+    .overview-hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, #6a8ab0 0%, transparent 50%);
+    }
+    .overview-hero-content { position: relative; z-index: 2; max-width: 800px; text-align: center; }
+    .overview-hero-content .tag {
+      font-size: 0.65rem; letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(30, 30, 50, 0.45); margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 1.5s ease 0.2s forwards;
+    }
+    .overview-hero-content h1 {
+      font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 400;
+      line-height: 1.15; color: rgba(255, 252, 248, 0.9); letter-spacing: 0.02em;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+      opacity: 0; animation: fadeUp 1.5s ease 0.5s forwards;
+    }
+    .overview-hero-content .intro-line {
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
+      color: rgba(30, 30, 50, 0.55); margin-top: 2rem;
+      font-style: italic; max-width: 520px; margin-left: auto; margin-right: auto;
+      opacity: 0; animation: fadeUp 1.5s ease 0.9s forwards;
+    }
+    .overview-info {
+      display: flex; gap: 4rem; padding: 2.5rem 3rem;
+      border-bottom: 1px solid rgba(30, 30, 50, 0.08); flex-wrap: wrap;
+      justify-content: center;
+    }
+    .info-item { display: flex; flex-direction: column; gap: 0.2rem; align-items: center; }
+    .info-item .info-label { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(30, 30, 50, 0.4); }
+    .info-item .info-value { font-size: 0.9rem; color: rgba(20, 20, 40, 0.7); }
+    .overview-wall-text { max-width: 640px; padding: 4rem 3rem 3rem; margin: 0 auto; }
+    .overview-wall-text h2 { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(30, 30, 50, 0.4); margin-bottom: 1.2rem; text-align: center; }
+    .overview-wall-text p { font-size: clamp(1.5rem, 1.3vw, 1.12rem); color: rgba(20, 20, 40); line-height: 2; margin-bottom: 1rem; }
+    .overview-grid-header {
+      padding: 2rem 3rem 1rem; display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .overview-grid-header h3 { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(30, 30, 50, 0.4); }
+    .overview-grid-header .item-count { font-size: 0.75rem; color: rgba(30, 30, 50, 0.35); }
+    .overview-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 4px; padding: 0 3rem 4rem; max-width: 1200px; margin: 0 auto;
+    }
+    .overview-thumb {
+      position: relative; aspect-ratio: 4/3; overflow: hidden; cursor: pointer; background: #4a6a8a;
+    }
+    .overview-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease, filter 0.3s ease; filter: brightness(0.8) saturate(0.85); }
+    .overview-thumb:hover img { transform: scale(1.06); filter: brightness(1) saturate(1); }
+    .overview-thumb .thumb-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(30, 50, 75, 0.88) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.4s ease;
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 1rem;
+    }
+    .overview-thumb:hover .thumb-overlay { opacity: 1; }
+    .thumb-overlay .thumb-number { font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(180, 200, 220, 0.6); }
+    .thumb-overlay .thumb-title { font-size: 0.82rem; color: rgba(240, 238, 232, 0.9); margin-top: 0.2rem; line-height: 1.3; }
+    .btn-row { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 6rem; }
+    .enter-exhibition {
+      display: block; width: fit-content; padding: 1rem 3rem;
+      border: 1px solid rgba(20, 20, 40, 0.2); background: transparent;
+      color: rgba(20, 20, 40, 0.65); font-family: "EB Garamond", serif; font-size: 1rem;
+      letter-spacing: 0.1em; cursor: pointer; text-decoration: none; transition: all 0.5s ease;
+    }
+    .enter-exhibition:hover { background: rgba(20, 20, 40, 0.06); border-color: rgba(20, 20, 40, 0.4); color: rgba(20, 20, 40, 0.85); }
+
+    /* ═══ HORIZONTAL CINEMATIC SCROLL ═══ */
+    .cinematic-page { position: relative; width: 100%; overflow: hidden; }
+    .sky-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(to top, #c8d6e4 0%, #b8c8da 25%, #a0b4cc 45%, #8aa0be 70%, #6a8ab0 100%);
+    }
+    .h-track {
+      position: absolute; top: 0; left: 0; height: 100vh;
+      display: flex; align-items: center; z-index: 2; gap: 0;
+    }
+    .h-section-title {
+      flex-shrink: 0; width: 100vw; height: 100vh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 2rem;
+    }
+    .h-section-title h2 {
+      font-size: clamp(2rem, 5vw, 4rem); font-weight: 400; color: rgba(35, 45, 65, 0.7);
+      letter-spacing: 0.03em; line-height: 1.1;
+    }
+    .h-section-title .section-sub {
+      font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(35, 45, 65, 0.4); margin-top: 1rem;
+    }
+    .h-slide {
+      flex-shrink: 0; width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 2rem; gap: 3rem;
+    }
+    .h-slide .slide-image {
+      flex-shrink: 0; max-width: 65vw; max-height: 85vh; object-fit: contain;
+      box-shadow: 0 12px 60px rgba(0, 0, 0, 0.4); cursor: zoom-in;
+    }
+    .h-slide .slide-caption { max-width: 320px; flex-shrink: 0; }
+    .slide-caption .caption-number { font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(35, 45, 65, 0.4); margin-bottom: 0.8rem; }
+    .slide-caption .caption-text { font-size: clamp(1.25rem, 1.1vw, 1.02rem); color: rgba(35, 45, 65, 0.72); line-height: 1.9; }
+    .slide-caption .caption-source { font-size: clamp(0.62rem, 0.85vw, 0.72rem); color: rgba(35, 45, 65, 0.4); margin-top: 0.8rem; line-height: 1.6; }
+    .h-progress { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); width: min(400px, 60vw); height: 2px; background: rgba(20, 20, 40, 0.1); z-index: 50; border-radius: 1px; display: none; }
+    .h-progress.visible { display: block; }
+    .h-progress-fill { height: 100%; width: 0%; background: rgba(20, 20, 40, 0.35); border-radius: 1px; transition: width 0.1s linear; }
+    .h-scroll-hint { position: fixed; bottom: 3rem; right: 2rem; z-index: 50; font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(20, 20, 40, 0.3); display: none; transition: opacity 0.8s; }
+    .h-scroll-hint.visible { display: block; }
+    .h-scroll-hint.hidden { opacity: 0; }
+    .h-arrow {
+      position: fixed; top: 50%; transform: translateY(-50%); z-index: 50;
+      width: 48px; height: 48px; border: 1px solid rgba(20, 20, 40, 0.15);
+      border-radius: 50%; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(6px);
+      color: rgba(20, 20, 40, 0.5); font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      transition: all 0.3s ease; font-family: "EB Garamond", serif;
+    }
+    .h-arrow:hover { background: rgba(255, 255, 255, 0.35); border-color: rgba(20, 20, 40, 0.3); color: rgba(20, 20, 40, 0.8); }
+    .h-arrow.visible { display: flex; }
+    .h-arrow-left { left: 1.5rem; }
+    .h-arrow-right { right: 1.5rem; }
+    .h-back-overview {
+      position: fixed; top: 1.2rem; right: 1.5rem; z-index: 100;
+      padding: 0.5rem 1.2rem; border: 1px solid rgba(20, 20, 40, 0.15);
+      border-radius: 20px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(6px);
+      color: rgba(20, 20, 40, 0.5); font-family: "EB Garamond", serif;
+      font-size: 0.78rem; letter-spacing: 0.06em; text-decoration: none;
+      cursor: pointer; display: none; transition: all 0.3s ease;
+    }
+    .h-back-overview:hover { background: rgba(255, 255, 255, 0.35); border-color: rgba(20, 20, 40, 0.3); color: rgba(20, 20, 40, 0.8); }
+    .h-back-overview.visible { display: block; }
+
+    /* Zoom overlay */
+    .zoom-overlay {
+      position: fixed; inset: 0; z-index: 500; background: rgba(4, 4, 8, 0.94);
+      backdrop-filter: blur(8px); display: none; flex-direction: column;
+      justify-content: center; align-items: center; cursor: zoom-out; padding: 2rem 2rem 1rem;
+    }
+    .zoom-overlay.active { display: flex; }
+    .zoom-overlay img { max-width: 92vw; max-height: 72vh; object-fit: contain; box-shadow: 0 16px 60px rgba(0, 0, 0, 0.5); }
+    .zoom-caption { max-width: 580px; text-align: center; margin-top: 1.5rem; }
+    .zoom-caption .caption-text { font-size: clamp(1rem, 1.2vw, 1.05rem); color: rgba(200, 190, 178, 0.75); line-height: 1.8; }
+    .zoom-caption .caption-source { font-size: clamp(1rem, 0.9vw, 0.75rem); color: rgba(200, 190, 178, 0.35); margin-top: 0.5rem; }
+    .zoom-close-hint { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); font-family: "EB Garamond", serif; font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(200, 190, 178, 0.3); }
+
+    /* Source list */
+    .source-list-wrap { background: linear-gradient(to bottom, #f4eac8 0%, #f0e6c0 100%); padding-top: 2rem; position: relative; z-index: 2; }
+    .source-list { max-width: 680px; margin: 0 auto; padding: 4rem 2rem 6rem; border-top: 1px solid rgba(20, 20, 40, 0.08); }
+    .source-list h3 { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(20, 20, 40, 0.45); margin-bottom: 1.5rem; }
+    .source-list p { font-size: clamp(0.72rem, 1vw, 0.85rem); color: rgba(20, 20, 40, 0.5); line-height: 1.8; margin-bottom: 0.5rem; text-indent: -1.5em; padding-left: 1.5em; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      .overview-hero { height: 50vh; padding: 2rem; }
+      .overview-info { padding: 1.5rem 2rem; gap: 2rem; }
+      .overview-wall-text { padding: 2rem; }
+      .overview-grid-header { padding: 1.5rem 1.5rem 0.8rem; }
+      .overview-grid { padding: 0 1.5rem 3rem; grid-template-columns: repeat(2, 1fr); }
+      .h-slide { flex-direction: column; gap: 1.5rem; padding: 1.5rem; }
+      .h-slide .slide-image { max-width: 92vw; max-height: 55vh; }
+      .h-slide .slide-caption { max-width: 90vw; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="snow-canvas" aria-hidden="true"></canvas>
+  <a class="back-home" href="index.html#branchesSection">← back</a>
+
+  <!-- ═══ OVERVIEW PAGE ═══ -->
+  <div class="overview-page">
+    <div class="overview-hero">
+      <div class="overview-hero-bg"></div>
+      <div class="overview-hero-content">
+        <p class="tag">Digital Gallery</p>
+        <h1>Written Without,<br>Written Within</h1>
+        <p class="intro-line">Evenki and Manchurian women — erased by empires, present in their own terms.</p>
+      </div>
+    </div>
+    <div class="overview-info">
+      <div class="info-item"><span class="info-label">Curator</span><span class="info-value">Feier Yu</span></div>
+      <div class="info-item"><span class="info-label">Items</span><span class="info-value">15</span></div>
+      <div class="info-item"><span class="info-label">Sources</span><span class="info-value">11 archives</span></div>
+      <div class="info-item"><span class="info-label">Date</span><span class="info-value">May 2026</span></div>
+    </div>
+    <div class="overview-wall-text">
+      <h2>About This Exhibition</h2>
+      <p>This exhibition examines how womanhood in Evenki, Manchu, and other indigenous cultures of Northeastern Asia is portrayed. Across most dimensions of history, these women were written without identities, flattened into a singular representation, and exploited for economic or political gains. Another side of the exhibition showcases the diverse characteristics and perspectives that each woman possesses. The disparity between what is written extensively and what is almost never written about highlights the overwhelming disregard of women's status in all fields — which is only just beginning to change.</p>
+      <p>A key aspect that this exhibition focuses on is how religion, Shamanism as well as other indigenous beliefs, interacts with these women. Religious practice was a major source of women's authority and also the reason they were targeted — both for being religious and for having authority. Beliefs were reduced to superstitions, and then commodified as cultural heritage, used mainly for profit rather than actual care.</p>
+      <p>Through fifteen artifacts spanning from paintings to contemporary art, this exhibition aims not to tell a single chronological narrative. Instead, it follows an ongoing thread of history, in which stories are simultaneously written without the true roles of women — and in which women have written themselves into the story, but always at a cost.</p>
+    </div>
+    <div class="overview-grid-header">
+      <h3>Collection</h3>
+      <span class="item-count">15 items</span>
+    </div>
+    <div class="overview-grid">
+      <div class="overview-thumb" data-slide="0"><img src="image/digtal/gallery-01.jpg" alt="Item 1" /><div class="thumb-overlay"><span class="thumb-number">01</span><span class="thumb-title">Fingering Prayer Beads While Watching Cats</span></div></div>
+      <div class="overview-thumb" data-slide="1"><img src="image/digtal/gallery-02.jpg" alt="Item 2" /><div class="thumb-overlay"><span class="thumb-number">02</span><span class="thumb-title">Interior with Woman, Child and Nurse</span></div></div>
+      <div class="overview-thumb" data-slide="2"><img src="image/digtal/gallery-03.jpg" alt="Item 3" /><div class="thumb-overlay"><span class="thumb-number">03</span><span class="thumb-title">Portrait of a Woman Carrying a Child</span></div></div>
+      <div class="overview-thumb" data-slide="3"><img src="image/digtal/gallery-04.png" alt="Item 4" /><div class="thumb-overlay"><span class="thumb-number">04</span><span class="thumb-title">Evenki Cradle</span></div></div>
+      <div class="overview-thumb" data-slide="4"><img src="image/digtal/gallery-05.jpg" alt="Item 5" /><div class="thumb-overlay"><span class="thumb-number">05</span><span class="thumb-title">Qing Flower-Pot Shoes</span></div></div>
+      <div class="overview-thumb" data-slide="5"><img src="image/digtal/gallery-06.jpg" alt="Item 6" /><div class="thumb-overlay"><span class="thumb-number">06</span><span class="thumb-title">War Damage, Manchuria</span></div></div>
+      <div class="overview-thumb" data-slide="6"><img src="image/digtal/gallery-07.jpg" alt="Item 7" /><div class="thumb-overlay"><span class="thumb-number">07</span><span class="thumb-title">The Witch Undergoes a Transformation</span></div></div>
+      <div class="overview-thumb" data-slide="7"><img src="image/digtal/gallery-08.jpg" alt="Item 8" /><div class="thumb-overlay"><span class="thumb-number">08</span><span class="thumb-title">The Opaque God</span></div></div>
+      <div class="overview-thumb" data-slide="8"><img src="image/digtal/gallery-09.jpg" alt="Item 9" /><div class="thumb-overlay"><span class="thumb-number">09</span><span class="thumb-title">Daur Shaman Drum</span></div></div>
+      <div class="overview-thumb" data-slide="9"><img src="image/digtal/gallery-10a.png" alt="Item 10" /><div class="thumb-overlay"><span class="thumb-number">10</span><span class="thumb-title">Female Shaman (Porcelain)</span></div></div>
+      <div class="overview-thumb" data-slide="10"><img src="image/digtal/gallery-11.png" alt="Item 11" /><div class="thumb-overlay"><span class="thumb-number">11</span><span class="thumb-title">Evenki Cosmological Map</span></div></div>
+      <div class="overview-thumb" data-slide="11"><img src="image/digtal/gallery-12a.png" alt="Item 12" /><div class="thumb-overlay"><span class="thumb-number">12</span><span class="thumb-title">Poiret "Steppe"</span></div></div>
+      <div class="overview-thumb" data-slide="12"><img src="image/digtal/gallery-13.gif" alt="Item 13" /><div class="thumb-overlay"><span class="thumb-number">13</span><span class="thumb-title">Offering to the Yellow Weasel Spirit</span></div></div>
+      <div class="overview-thumb" data-slide="13"><img src="image/digtal/gallery-14.jpg" alt="Item 14" /><div class="thumb-overlay"><span class="thumb-number">14</span><span class="thumb-title">The Widowed Witch</span></div></div>
+      <div class="overview-thumb" data-slide="14"><img src="image/digtal/gallery-15.png" alt="Item 15" /><div class="thumb-overlay"><span class="thumb-number">15</span><span class="thumb-title">Manchu Shamanic Bronze Mirror</span></div></div>
+    </div>
+    <div class="btn-row">
+      <a href="#exhibition" class="enter-exhibition" id="enterBtn">Enter Exhibition →</a>
+      <a href="#sourcesSection" class="enter-exhibition" onclick="event.preventDefault(); document.getElementById('sourcesSection').scrollIntoView({behavior:'smooth'});">Sources</a>
+    </div>
+  </div>
+
+  <!-- ═══ HORIZONTAL CINEMATIC SCROLL ═══ -->
+  <div class="cinematic-page" id="exhibition">
+    <div class="sky-bg" id="skyBg"></div>
+    <div class="h-track" id="hTrack">
+
+      <!-- Title -->
+      <div class="h-section-title">
+        <h2>Written Without,<br>Written Within</h2>
+      </div>
+
+      <!-- 01 -->
+      <div class="h-slide" data-item="0">
+        <img class="slide-image" src="image/digtal/gallery-01.jpg" alt="Fingering Prayer Beads While Watching Cats" />
+        <div class="slide-caption">
+          <p class="caption-number">01</p>
+          <p class="caption-text">The Manchu women, situated in Qing royalty, were nevertheless objects of the male gaze. They remained anonymous in one of the most popular series of paintings of beauties (美人图) and were deprived of identities.</p>
+          <p class="caption-source">Fingering Prayer Beads While Watching Cats [捻珠观猫]. Court painter (attributed). Qing Dynasty, c. 1732. Ink and color on silk, 184 × 98 cm. From the Screen of Twelve Beauties / Yongzheng's Twelve Beauties at Leisure [雍亲王题书堂深居图屏]. Palace Museum, Beijing.</p>
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="h-slide" data-item="1">
+        <img class="slide-image" src="image/digtal/gallery-02.jpg" alt="Interior with Woman, Child and Nurse" />
+        <div class="slide-caption">
+          <p class="caption-number">02</p>
+          <p class="caption-text">"In Qing China, images of women like this one were known as meiren, or beauty paintings. Made primarily for the commercial market, they often incorporated artistic techniques linked to Western fashions" (The Metropolitan Museum of Art). Beauties became commercialized and popularized. This narrative of anonymous beautiful women without identity blurred the reality of womanhood in this period of time.</p>
+          <p class="caption-source">Interior with Woman, Child and Nurse. Unidentified artist. Qing Dynasty, late 18th–early 19th century. Hanging scroll; ink and color on silk. The Metropolitan Museum of Art, New York.</p>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="h-slide" data-item="2">
+        <img class="slide-image" src="image/digtal/gallery-03.jpg" alt="Portrait of a Woman Carrying a Child" />
+        <div class="slide-caption">
+          <p class="caption-number">03</p>
+          <p class="caption-text">A Qing Dynasty woman placed in front of a European backdrop.</p>
+          <p class="caption-source">Portrait of an unnamed woman carrying a child on her back. Unidentified photographer, China, 1860s. Hand-colored albumen silver print. Loewentheil Photography of China Collection.</p>
+        </div>
+      </div>
+
+      <!-- 04 -->
+      <div class="h-slide" data-item="3">
+        <img class="slide-image" src="image/digtal/gallery-04.png" alt="Evenki Cradle" />
+        <div class="slide-caption">
+          <p class="caption-number">04</p>
+          <p class="caption-text">An Evenki cradle decorated with beadwork and leather fringe, made to carry a child on a mother's back. The cradle was crafted by women using techniques passed through generations. With these techniques, traditions of motherhood were simultaneously passed down. It now sits in a museum in New York.</p>
+          <p class="caption-source">Evenki (Tungus) Cradle with Decoration and Fringe. Photograph by Lee Boltin. Siberia, 1944. Photographic negative, 8 × 10. Division of Anthropology: Asian Ethnographic Collection, American Museum of Natural History, New York.</p>
+        </div>
+      </div>
+
+      <!-- 05 -->
+      <div class="h-slide" data-item="4">
+        <img class="slide-image" src="image/digtal/gallery-05.jpg" alt="Qing Flower-Pot Shoes" />
+        <div class="slide-caption">
+          <p class="caption-number">05</p>
+          <p class="caption-text">Unlike Han women, Manchu women did not practice foot-binding; the elevated platform shoe was a distinctly Manchu form.<br><br>Worn by consorts and concubines of the Qing court, the base of the shoe features a tall, large wooden heel, considerably higher than the horseshoe-sole or ingot-sole styles of Manchu banner shoes (Shenyang Palace Museum). The upper is made of red satin embroidered with butterflies and floral patterns.</p>
+          <p class="caption-source">Qing Red Satin Embroidered Flower-Pot Shoes [清红缎彩绣花高底鞋]. Qing Dynasty. Textile and embroidery. Shenyang Palace Museum.</p>
+        </div>
+      </div>
+
+      <!-- 06 -->
+      <div class="h-slide" data-item="5">
+        <img class="slide-image" src="image/digtal/gallery-06.jpg" alt="War Damage, Manchuria" />
+        <div class="slide-caption">
+          <p class="caption-number">06</p>
+          <p class="caption-text">The archive records only "China--Manchuria." The city is unnamed. The people who lived here are also absent, or more likely, erased.</p>
+          <p class="caption-source">Aerial view of war damage to an unidentified urban area in Manchuria. Unidentified photographer. c. 1930s. Black-and-white lantern slide. Japanese Invasion of Manchuria Photograph Collection, George Mason University Libraries, Special Collections Research Center.</p>
+        </div>
+      </div>
+
+      <!-- 07 -->
+      <div class="h-slide" data-item="6">
+        <img class="slide-image" src="image/digtal/gallery-07.jpg" alt="The Witch Undergoes a Transformation" />
+        <div class="slide-caption">
+          <p class="caption-number">07</p>
+          <p class="caption-text">Religion became an obstruction to the developments of a new China. Religious women were thus assigned a new identity — witch. Negative associations forcibly interpreted women in religious practices as an obstacle to progress. This image contrasts with "Fingering Prayer Beads While Watching Cats" where religion was trivialized; here religion and beliefs are demonized.</p>
+          <p class="caption-source">The Witch Undergoes a Transformation [巫婆快转变]. Tian Zuoliang (田作良). 1951. Color lithograph, 39 × 52.5 cm. Published by Shanxi Province Art Association (山西省美協). chineseposters.net, PC-1951-s-005.</p>
+        </div>
+      </div>
+
+      <!-- 08 -->
+      <div class="h-slide" data-item="7">
+        <img class="slide-image" src="image/digtal/gallery-08.jpg" alt="The Opaque God" />
+        <div class="slide-caption">
+          <p class="caption-number">08</p>
+          <p class="caption-text">What the previous image condemned, this image celebrates — but also mourns. "Shamanism, previously a superstition, is now treated as a part of traditional culture and Guankouni the inheritor of the shaman customs and culture. She's lost in the whirlpool of the new terms such as 'eco-tourism', 'cultural protection' and so on" (Gu Tao).</p>
+          <p class="caption-source">The Opaque God [神翳]. Dir. Gu Tao. 2011. Documentary, 90 min. Film still. Chinese Independent Film Archive.</p>
+        </div>
+      </div>
+
+      <!-- 09 -->
+      <div class="h-slide" data-item="8">
+        <img class="slide-image" src="image/digtal/gallery-09.jpg" alt="Daur Shaman Drum" />
+        <div class="slide-caption">
+          <p class="caption-number">09</p>
+          <p class="caption-text">This shaman drum previously belonged to Siqingua Shaman, one of the last shamans of the Daur ethnic group. As a female shaman, she held utmost renown in her community for her healing rituals. It is acknowledged in the archive that she sold her drum to two researchers of Academia Sinica.</p>
+          <p class="caption-source">Daur Shaman Drum [達斡爾族薩滿鼓]. Ortenasen. Ritual object. Museum of the Institute of Ethnology, Academia Sinica. Object ID: 10059. Open Museum.</p>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="h-slide" data-item="9">
+        <img class="slide-image" src="image/digtal/gallery-10a.png" alt="Female Shaman (front)" />
+        <div class="slide-caption">
+          <p class="caption-number">10</p>
+          <p class="caption-text">Shamanism was also commodified within imperial culture. This piece was inspired by the book of the famous ethnographer and traveler Johann Gottlieb Georgi entitled A Description of All the Peoples Inhabiting the Russian State (MET). These real scenes of people became miniaturized into displays made for decoration.</p>
+          <p class="caption-source">Female Shaman. Imperial Porcelain Manufactory, St. Petersburg. Russian, c. 1780–1800. Hard-paste porcelain, height 26 cm. From the People of Russia series. The Metropolitan Museum of Art, New York.</p>
+        </div>
+      </div>
+
+      <!-- 11 -->
+      <div class="h-slide" data-item="10">
+        <img class="slide-image" src="image/digtal/gallery-11.png" alt="Evenki Cosmological Map" />
+        <div class="slide-caption">
+          <p class="caption-number">11</p>
+          <p class="caption-text">A visual representation of the Evenki worldview drawn in ink on reindeer hide. Three realms are illustrated vertically: the upper world, Ugu Buga (sky); the middle world, Dulin Buga (earth); and the lower world, Hargu Buga (water). Evenki culture-holder Professor Alexander Varlamov guided artist Anya Gleizer to ink this design traditionally onto reindeer hide to honour the centrality of reindeer in Evenki cosmology (Pitt Rivers Museum).</p>
+          <p class="caption-source">Map Representing Evenki World View and Cosmology. Anya Gleizer. 2019. Ink on reindeer hide. From the exhibition Wandering in Other Worlds: Evenki Cosmology and Shamanic Traditions. Pitt Rivers Museum, University of Oxford.</p>
+        </div>
+      </div>
+
+      <!-- 12 -->
+      <div class="h-slide" data-item="11">
+        <img class="slide-image" src="image/digtal/gallery-12a.png" alt="Poiret Steppe" />
+        <div class="slide-caption">
+          <p class="caption-number">12</p>
+          <p class="caption-text">A French haute couture prototype titled "Steppe" — named not after the Manchu women whose dress it borrows from, but after their landscape. The asymmetric closure, high collar, and embroidered motifs are specifically Manchu design elements, extracted and repackaged for a Parisian audience (MET). The Manchu Women who wore these clothes and the traditional techniques which made this design possible are not acknowledged. The clothing of a Manchu woman becomes exotified to appeal to an audience for economic gain.</p>
+          <p class="caption-source">"Steppe." Paul Poiret (French, 1879–1944). 1912. Silk, wool, fur, cotton. The Metropolitan Museum of Art, New York.</p>
+        </div>
+      </div>
+
+      <!-- 13 -->
+      <div class="h-slide" data-item="12">
+        <img class="slide-image" src="image/digtal/gallery-13.gif" alt="Offering to the Yellow Weasel Spirit" />
+        <div class="slide-caption">
+          <p class="caption-number">13</p>
+          <p class="caption-text">The Manchu artist herself states that these traditions are also "superstitions." "The people living in the mountain regions of the Northeast are rich in superstitions. This image depicts the folk belief in the Yellow Weasel as 'Yellow Immortal' (黃仙). Believers build small shrines for the Yellow Immortal, set out offerings of steamed buns, wine, and other items, burn incense, kowtow in worship, and mutter their wishes, praying for the Yellow Immortal's protection" (Hou Yumei).</p>
+          <p class="caption-source">Offering to the Yellow Weasel Spirit [供奉黃仙]. Hou Yumei (侯玉梅). Paper-cut. papercutlady.com.</p>
+        </div>
+      </div>
+
+      <!-- 14 -->
+      <div class="h-slide" data-item="13">
+        <img class="slide-image" src="image/digtal/gallery-14.jpg" alt="The Widowed Witch" />
+        <div class="slide-caption">
+          <p class="caption-number">14</p>
+          <p class="caption-text">Many young people of the Northeast have chosen a career in shamanism or religion in order to cope with economic difficulties; they are viewed as frauds for not actually holding these beliefs personally. This is a contemporary issue that indigenous religion faces. In <em>The Widowed Witch</em>, a three-time widow named Erhao is set off on a quest through rural China after a series of tragedies. After being involved in a number of miraculous events, she embraces the role of a shaman — her performances seem to have a positive influence on the lives of various locals, but improving people seems beyond her powers (IFFR).</p>
+          <p class="caption-source">The Widowed Witch [北方一片苍茫]. Dir. Cai Chengjie. 2018. Drama, 120 min. Color/B&W. Film still. Winner, Hivos Tiger Award, International Film Festival Rotterdam, 2018.</p>
+        </div>
+      </div>
+
+      <!-- 15 -->
+      <div class="h-slide" data-item="14">
+        <img class="slide-image" src="image/digtal/gallery-15.png" alt="Manchu Shamanic Bronze Mirror" />
+        <div class="slide-caption">
+          <p class="caption-number">15</p>
+          <p class="caption-text">Bronze mirrors were usually hung on the shaman's chest and back to repel evil. They were capable of reflecting the true appearance of demons. After fourteen images of women seen through the eyes of empires, markets, states, and themselves, what reflection do you see?</p>
+          <p class="caption-source">Bronze Mirror [铜镜]. Republican era. Bronze, diameter 17 cm. Used in Manchu shamanic rituals at Wula Street (乌拉街), Jilin. Jilin Manchu Museum (吉林市满族博物馆).</p>
+        </div>
+      </div>
+
+      <!-- End -->
+      <div class="h-section-title">
+        <p style="font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(20,20,40,0.3); margin-bottom: 2rem;">— end of exhibition —</p>
+        <h2 style="font-size: clamp(1.4rem, 3.5vw, 2.4rem); color: rgba(20,20,40,0.6); font-weight: 400; font-style: italic;">Thank you for visiting.</h2>
+        <p style="font-size: 0.7rem; letter-spacing: 0.2em; color: rgba(20,20,40,0.35); margin-top: 2rem;">continue scrolling for sources</p>
+      </div>
+
+    </div>
+    <div class="h-progress" id="hProgress"><div class="h-progress-fill" id="hProgressFill"></div></div>
+    <p class="h-scroll-hint" id="hScrollHint">scroll to navigate →</p>
+    <button class="h-arrow h-arrow-left" id="hArrowLeft" aria-label="Previous">←</button>
+    <button class="h-arrow h-arrow-right" id="hArrowRight" aria-label="Next">→</button>
+    <a class="h-back-overview" id="hBackOverview" href="#" aria-label="Back to overview">↑ Overview</a>
+  </div>
+
+  <!-- Zoom overlay -->
+  <div class="zoom-overlay" id="zoomOverlay">
+    <img id="zoomImg" src="" alt="" />
+    <div class="zoom-caption">
+      <p class="caption-text" id="zoomCaptionText"></p>
+      <p class="caption-source" id="zoomCaptionSource"></p>
+    </div>
+    <p class="zoom-close-hint">click anywhere to close</p>
+  </div>
+
+  <!-- Sources -->
+  <div class="source-list-wrap" id="sourcesSection">
+    <div class="source-list">
+      <h3>Sources</h3>
+      <p>Borisova, Izabella Z. "Traditional Clothing as an Indicator of Self-Identification and a Factor of Cultural Preservation in the Context of Industrial Development of Ancestral Lands (Using the Example of the Evenki of Syuldukar)." <em>Journal of Siberian Federal University. Humanities & Social Sciences</em>, vol. 18, no. 5, 2025, pp. 1051–1071. elib.sfu-kras.ru/bitstream/handle/2311/156133/20_Borisova.pdf.</p>
+      <p>Cai Chengjie, director. <em>The Widowed Witch</em> [北方一片苍茫]. 2018. International Film Festival Rotterdam, iffr.com/en/iffr/2018/films/the-widowed-witch.</p>
+      <p>chineseposters.net. <em>The Witch Undergoes a Transformation</em> [巫婆快转变]. Tian Zuoliang, 1951. PC-1951-s-005.</p>
+      <p>George Mason University Libraries, Special Collections Research Center. <em>War Damage</em>. Japanese Invasion of Manchuria Photograph Collection. Record ID: C0200B01F67. images.gmu.edu.</p>
+      <p>Gleizer, Anya. <em>Map Representing Evenki World View and Cosmology</em>. 2019. Ink on reindeer hide. Pitt Rivers Museum, University of Oxford. www.prm.ox.ac.uk/event/wandering-in-other-worlds.</p>
+      <p>Gu Tao, director. <em>The Opaque God</em> [神翳]. 2011. Chinese Independent Film Archive, www.chinaindiefilm.org/films/the-opaque-god/.</p>
+      <p>Hou Yumei (侯玉梅). <em>Offering to the Yellow Weasel Spirit</em> [供奉黃仙]. Paper-cut. papercutlady.com.</p>
+      <p>Jilin Manchu Museum (吉林市满族博物馆). <em>Bronze Mirror</em> [铜镜]. Republican era. www.jlsmzbwg.org.cn/article/index/id/176.</p>
+      <p>Lee Boltin, photographer. <em>Evenki (Tungus) Cradle with Decoration and Fringe</em>. 1944. American Museum of Natural History, New York. digitalcollections.amnh.org.</p>
+      <p>Loewentheil Photography of China Collection. <em>Portrait of a Woman Carrying a Child</em>. 1860s. Hand-colored albumen silver print.</p>
+      <p>The Metropolitan Museum of Art. <em>Female Shaman</em>. Imperial Porcelain Manufactory, St. Petersburg, c. 1780–1800. www.metmuseum.org/art/collection/search/41637.</p>
+      <p>The Metropolitan Museum of Art. <em>Interior with Woman, Child and Nurse</em>. Qing Dynasty, late 18th–early 19th century. www.metmuseum.org/art/collection/search/53551.</p>
+      <p>The Metropolitan Museum of Art. <em>"Steppe."</em> Paul Poiret, 1912. www.metmuseum.org/art/collection/search/100001.</p>
+      <p>Museum of the Institute of Ethnology, Academia Sinica. <em>Daur Shaman Drum</em> [達斡爾族薩滿鼓]. Object ID: 10059. Open Museum, openmuseum.tw/muse/digi_object/b32eccb4d3e983026758927e66b9a65a.</p>
+      <p>Palace Museum, Beijing. <em>Fingering Prayer Beads While Watching Cats</em> [捻珠观猫]. Qing Dynasty, c. 1732. www.dpm.org.cn/collection/paint/231766.html.</p>
+      <p>Phoenix Television (凤凰卫视). Siqingua Shaman documentary segment. culture.ifeng.com/wenhuadaguanyuan/detail_2011_10/31/10286416_1.shtml.</p>
+      <p>Shenyang Palace Museum. <em>Qing Red Satin Embroidered Flower-Pot Shoes</em> [清红缎彩绣花高底鞋]. Qing Dynasty. www.sypm.org.cn/product_1/1161355419829948416.html.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script>
+    (function () {
+      var canvas = document.getElementById('snow-canvas');
+      var ctx = canvas.getContext('2d');
+      var w, h, flakes = [], COUNT = 200;
+      function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+      resize(); window.addEventListener('resize', resize);
+      for (var i = 0; i < COUNT; i++) {
+        flakes.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+          r: Math.random() * 2.2 + 0.4, speed: Math.random() * 0.4 + 0.1,
+          wind: Math.random() * 0.2 - 0.1, opacity: Math.random() * 0.3 + 0.06 });
+      }
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (var j = 0; j < flakes.length; j++) {
+          var f = flakes[j];
+          ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(200, 215, 230, ' + f.opacity + ')'; ctx.fill();
+          f.y += f.speed; f.x += f.wind + Math.sin(f.y * 0.01) * 0.12;
+          if (f.y > h) { f.y = -5; f.x = Math.random() * w; }
+          if (f.x > w) f.x = 0; if (f.x < 0) f.x = w;
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var page = document.getElementById('exhibition');
+      var track = document.getElementById('hTrack');
+      var skyBg = document.getElementById('skyBg');
+      var progressFill = document.getElementById('hProgressFill');
+      var progressBar = document.getElementById('hProgress');
+      var scrollHint = document.getElementById('hScrollHint');
+      var hintHidden = false;
+
+      var skyStops = [
+        { top: '#6a8ab0', mid1: '#8aa0be', mid2: '#a0b4cc', mid3: '#b8c8da', bot: '#c8d6e4' },
+        { top: '#7e96b2', mid1: '#a8a8aa', mid2: '#c8b8a0', mid3: '#dcc8a0', bot: '#e4d4b0' },
+        { top: '#8aa0b4', mid1: '#b4ac9c', mid2: '#d4c098', mid3: '#e4d0a0', bot: '#ecdcb4' },
+        { top: '#94a8b6', mid1: '#beb498', mid2: '#dcc894', mid3: '#ead8a4', bot: '#f0e4be' },
+        { top: '#9cb0bc', mid1: '#c6bc98', mid2: '#e0d098', mid3: '#ece0b0', bot: '#f4eac8' }
+      ];
+
+      function lerpColor(a, b, t) {
+        var aR = parseInt(a.slice(1,3), 16), aG = parseInt(a.slice(3,5), 16), aB = parseInt(a.slice(5,7), 16);
+        var bR = parseInt(b.slice(1,3), 16), bG = parseInt(b.slice(3,5), 16), bB = parseInt(b.slice(5,7), 16);
+        return '#' + ((1 << 24) + (Math.round(aR + (bR - aR) * t) << 16) + (Math.round(aG + (bG - aG) * t) << 8) + Math.round(aB + (bB - aB) * t)).toString(16).slice(1);
+      }
+
+      function updateSky(progress) {
+        var p = Math.max(0, Math.min(1, progress));
+        var segment = p * (skyStops.length - 1);
+        var idx = Math.floor(segment); var t = segment - idx;
+        if (idx >= skyStops.length - 1) { idx = skyStops.length - 2; t = 1; }
+        var a = skyStops[idx], b = skyStops[idx + 1];
+        skyBg.style.background = 'linear-gradient(to top, ' +
+          lerpColor(a.bot, b.bot, t) + ' 0%, ' + lerpColor(a.mid3, b.mid3, t) + ' 25%, ' +
+          lerpColor(a.mid2, b.mid2, t) + ' 45%, ' + lerpColor(a.mid1, b.mid1, t) + ' 70%, ' +
+          lerpColor(a.top, b.top, t) + ' 100%)';
+      }
+
+      var maxScroll = 0;
+      function calcMaxScroll() { maxScroll = track.scrollWidth - window.innerWidth; }
+      calcMaxScroll(); window.addEventListener('resize', calcMaxScroll);
+
+      var cinematicTop = 0;
+      function updateCinematicBounds() { cinematicTop = page.offsetTop; }
+      updateCinematicBounds(); window.addEventListener('resize', updateCinematicBounds);
+
+      page.style.height = (track.scrollWidth) + 'px';
+
+      window.addEventListener('scroll', function() {
+        var pageRect = page.getBoundingClientRect();
+        if (pageRect.top <= 0 && pageRect.bottom >= window.innerHeight) {
+          var scrolled = -pageRect.top;
+          var totalScrollable = page.offsetHeight - window.innerHeight;
+          var progress = Math.max(0, Math.min(1, scrolled / totalScrollable));
+          track.style.position = 'fixed'; track.style.top = '0';
+          track.style.transform = 'translateX(' + (-progress * maxScroll) + 'px)';
+          updateSky(progress);
+          progressFill.style.width = (progress * 100) + '%';
+          if (!hintHidden && progress > 0.02) { scrollHint.classList.add('hidden'); hintHidden = true; }
+          skyBg.style.position = 'fixed';
+        } else if (pageRect.top > 0) {
+          track.style.position = 'absolute'; track.style.transform = 'translateX(0)';
+          skyBg.style.position = 'absolute'; updateSky(0);
+          progressFill.style.width = '0%'; hintHidden = false; scrollHint.classList.remove('hidden');
+        } else {
+          track.style.position = 'absolute';
+          track.style.top = (page.offsetHeight - window.innerHeight) + 'px';
+          track.style.transform = 'translateX(' + (-maxScroll) + 'px)';
+          skyBg.style.position = 'absolute'; updateSky(1); progressFill.style.width = '100%';
+        }
+      });
+
+      // Thumbnail click
+      document.querySelectorAll('.overview-thumb').forEach(function(thumb) {
+        thumb.addEventListener('click', function() {
+          var slideIdx = parseInt(thumb.getAttribute('data-slide'));
+          var slides = track.querySelectorAll('.h-slide');
+          if (slideIdx >= 0 && slideIdx < slides.length) {
+            var targetSlide = slides[slideIdx];
+            var slideLeft = targetSlide.offsetLeft;
+            var totalScrollable = page.offsetHeight - window.innerHeight;
+            var scrollTarget = cinematicTop + (slideLeft / maxScroll) * totalScrollable;
+            window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Enter button
+      document.getElementById('enterBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({ top: cinematicTop, behavior: 'smooth' });
+      });
+
+      // Arrow navigation — snap to panel positions
+      var arrowLeft = document.getElementById('hArrowLeft');
+      var arrowRight = document.getElementById('hArrowRight');
+      var allPanels = track.children;
+
+      function getCurrentPanelIndex() {
+        var totalScrollable = page.offsetHeight - window.innerHeight;
+        var currentScroll = Math.max(0, window.scrollY - cinematicTop);
+        var currentProgress = currentScroll / totalScrollable;
+        var currentOffset = currentProgress * maxScroll;
+        var closestIdx = 0, closestDist = Infinity, runningLeft = 0;
+        for (var i = 0; i < allPanels.length; i++) {
+          var panelCenter = runningLeft + allPanels[i].offsetWidth / 2;
+          var viewCenter = currentOffset + window.innerWidth / 2;
+          var dist = Math.abs(panelCenter - viewCenter);
+          if (dist < closestDist) { closestDist = dist; closestIdx = i; }
+          runningLeft += allPanels[i].offsetWidth;
+        }
+        return closestIdx;
+      }
+
+      function scrollToPanel(idx) {
+        if (idx < 0) idx = 0;
+        if (idx >= allPanels.length) idx = allPanels.length - 1;
+        var panelLeft = 0;
+        for (var i = 0; i < idx; i++) { panelLeft += allPanels[i].offsetWidth; }
+        var panelCenter = panelLeft + allPanels[idx].offsetWidth / 2;
+        var targetOffset = Math.max(0, Math.min(panelCenter - window.innerWidth / 2, maxScroll));
+        var totalScrollable = page.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: cinematicTop + (targetOffset / maxScroll) * totalScrollable, behavior: 'smooth' });
+      }
+
+      arrowLeft.addEventListener('click', function() { scrollToPanel(getCurrentPanelIndex() - 1); });
+      arrowRight.addEventListener('click', function() { scrollToPanel(getCurrentPanelIndex() + 1); });
+
+      // Show/hide UI
+      var backBtn = document.getElementById('hBackOverview');
+      window.addEventListener('scroll', function() {
+        var pageRect = page.getBoundingClientRect();
+        var inSection = pageRect.top <= 0 && pageRect.bottom >= window.innerHeight;
+        arrowLeft.classList.toggle('visible', inSection);
+        arrowRight.classList.toggle('visible', inSection);
+        backBtn.classList.toggle('visible', inSection);
+        progressBar.classList.toggle('visible', inSection);
+        scrollHint.classList.toggle('visible', inSection && !hintHidden);
+      });
+
+      backBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Zoom
+      var zoomOverlay = document.getElementById('zoomOverlay');
+      var zoomImg = document.getElementById('zoomImg');
+      var zoomCaptionText = document.getElementById('zoomCaptionText');
+      var zoomCaptionSource = document.getElementById('zoomCaptionSource');
+
+      document.querySelectorAll('.slide-image').forEach(function(img) {
+        img.addEventListener('click', function(e) {
+          e.stopPropagation();
+          zoomImg.src = img.src; zoomImg.alt = img.alt;
+          var slide = img.closest('.h-slide');
+          var captionEl = slide ? slide.querySelector('.caption-text') : null;
+          var sourceEl = slide ? slide.querySelector('.caption-source') : null;
+          zoomCaptionText.textContent = captionEl ? captionEl.textContent : '';
+          zoomCaptionSource.textContent = sourceEl ? sourceEl.textContent : '';
+          zoomOverlay.classList.add('active');
+        });
+      });
+
+      zoomOverlay.addEventListener('click', function() { zoomOverlay.classList.remove('active'); });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && zoomOverlay.classList.contains('active')) zoomOverlay.classList.remove('active');
+      });
+    })();
+  </script>
+</body>
+</html>
