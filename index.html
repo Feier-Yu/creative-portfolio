@@ -644,12 +644,11 @@
       min-height: 1000px;
       padding-top: 10vh;
       margin-bottom: 4vh;
-      overflow: hidden;
     }
 
     .branches-scene {
       position: relative;
-      min-height: 560px;
+      min-height: 720px;
     }
 
     .branch {
@@ -722,6 +721,76 @@
 
     .branches-section.sun-rise .branch-3 {
       animation: windSway3 7s ease-in-out 0.5s infinite;
+    }
+
+    .mountain-nav-wrap {
+      position: relative;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .mountain-back {
+      position: absolute;
+      bottom: 0;
+      right: -8%;
+      width: clamp(280px, 42vw, 560px);
+      height: auto;
+      z-index: 9;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.25));
+      transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .gallery-title-card {
+      position: absolute;
+      bottom: 14rem;
+      right: 8%;
+      z-index: 10;
+      text-decoration: none;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.28rem;
+      transform: rotate(3deg);
+      pointer-events: auto;
+    }
+
+    .branches-mountain {
+      position: absolute;
+      bottom: -4rem;
+      right: 0;
+      width: clamp(480px, 68vw, 980px);
+      height: auto;
+      z-index: 11;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.25));
+      transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Mountains part when revealed */
+    .mountain-nav-wrap.mountains-parted .branches-mountain {
+      transform: translateX(-5vw);
+    }
+
+    .mountain-nav-wrap.mountains-parted .mountain-back {
+      transform: translateX(4vw);
+    }
+
+    .gallery-title-card:hover .gallery-title-word {
+      transform: translateX(5px);
+      box-shadow: 3px 5px 11px rgba(0, 0, 0, 0.34);
+    }
+
+    .gallery-title-word {
+      display: inline-block;
+      background: rgba(242, 235, 222, 0.92);
+      color: #17130e;
+      font-family: 'Special Elite', 'Courier New', monospace;
+      font-size: clamp(1.5rem, 4.2vw, 2.8rem);
+      letter-spacing: 0.06em;
+      padding: 0.18em 0.42em;
+      box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.24);
+      transition: transform 0.32s ease, box-shadow 0.32s ease;
     }
 
     .branch-photo-link {
@@ -797,7 +866,7 @@
 
     .bottom-nav {
       position: relative;
-      z-index: 20;
+      z-index: 8;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -955,6 +1024,15 @@
 
   </section>
 
+  <div class="mountain-nav-wrap">
+    <img class="mountain-back" src="image/mountain-back.png" alt="" aria-hidden="true">
+    <a href="project-3.html" onclick="zoomTo(event, this)" class="gallery-title-card">
+      <span class="gallery-title-word" style="transform: rotate(-1deg);">Digital</span>
+      <span class="gallery-title-word" style="transform: rotate(2deg); margin-left: 0.4rem;">Gallery</span>
+    </a>
+    <img class="branches-mountain" src="image/mountain.png" alt="" aria-hidden="true">
+  </div>
+
   <div class="bottom-nav">
     <a href="project-1.html" onclick="zoomTo(event, this)" class="nav-card">
       <div class="nav-pin"></div>
@@ -966,11 +1044,11 @@
       <div class="nav-string"></div>
       <span class="nav-label">Photo Essay</span>
     </a>
-    <!-- <a href="project3.html" onclick="zoomTo(event, this)" class="nav-card">
-    <div class="nav-pin"></div>
-    <div class="nav-string"></div>
-    <span class="nav-label">Project Three</span>
-  </a> -->
+    <a href="project-3.html" onclick="zoomTo(event, this)" class="nav-card">
+      <div class="nav-pin"></div>
+      <div class="nav-string"></div>
+      <span class="nav-label">Digital Gallery</span>
+    </a>
   </div>
 
   <script>
@@ -1110,6 +1188,68 @@
       trigger.addEventListener('focus', riseSun);
       trigger.addEventListener('blur', hideSun);
       window.addEventListener('resize', positionSun);
+    })();
+
+    // Mountain parting — mirrors cloud parting logic
+    (function () {
+      var wrap = document.querySelector('.mountain-nav-wrap');
+      var card = document.querySelector('.gallery-title-card');
+      if (!wrap || !card) return;
+
+      var autoRevealed = false;
+      var parted = false;
+      var hoverCount = 0;
+      var revealTimer = null;
+      var hoverTimer = null;
+
+      function partMountains() {
+        parted = true;
+        wrap.classList.add('mountains-parted');
+      }
+
+      function unpartMountains() {
+        parted = false;
+        wrap.classList.remove('mountains-parted');
+      }
+
+      card.addEventListener('mouseenter', function () {
+        partMountains();
+        hoverTimer = setTimeout(function () {
+          hoverCount++;
+          if (hoverCount >= 1 && revealTimer) {
+            clearTimeout(revealTimer);
+            revealTimer = null;
+          }
+        }, 1000);
+      });
+
+      card.addEventListener('mouseleave', function () {
+        if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+        if (!autoRevealed) {
+          unpartMountains();
+        }
+      });
+
+      // Auto-reveal after 10 seconds — only if user hasn't hovered at all
+      var mountainObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && hoverCount === 0) {
+            revealTimer = setTimeout(function () {
+              if (hoverCount === 0) {
+                autoRevealed = true;
+                partMountains();
+              }
+            }, 10000);
+          } else if (!entry.isIntersecting) {
+            if (revealTimer) { clearTimeout(revealTimer); revealTimer = null; }
+            if (autoRevealed) {
+              autoRevealed = false;
+              unpartMountains();
+            }
+          }
+        });
+      }, { threshold: 0.1 });
+      mountainObserver.observe(wrap);
     })();
 
     // Parallax
